@@ -2,6 +2,7 @@ import CoreBluetooth
 
 enum ConnectionChange {
     case connected
+    case restored
     case failedToConnect(Error?)
     case disconnected(Error?)
 }
@@ -44,5 +45,13 @@ final class CentralManagerDelegate: NSObject, CBCentralManagerDelegate {
 
     func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
         onConnectionChange(peripheral, .disconnected(error))
+    }
+
+    func centralManager(_ central: CBCentralManager, willRestoreState dict: [String: Any]) {
+        if let peripherals = dict[CBCentralManagerRestoredStatePeripheralsKey] as? [CBPeripheral] {
+            peripherals.forEach { (peripheral) in
+                onConnectionChange(peripheral, .restored)   
+            }
+        }
     }
 }

@@ -5,23 +5,25 @@ import 'converter/args_to_protubuf_converter.dart';
 import 'converter/protobuf_converter.dart';
 
 class ReactiveBleMobilePlatform extends ReactiveBlePlatform {
-  ReactiveBleMobilePlatform({
-    required ArgsToProtobufConverter argsToProtobufConverter,
-    required ProtobufConverter protobufConverter,
-    required MethodChannel bleMethodChannel,
-    required Stream<List<int>> connectedDeviceChannel,
-    required Stream<List<int>> charUpdateChannel,
-    required Stream<List<int>> bleDeviceScanChannel,
-    required Stream<List<int>> bleStatusChannel,
-    Logger? logger,
-  })  : _argsToProtobufConverter = argsToProtobufConverter,
+  ReactiveBleMobilePlatform(
+      {required ArgsToProtobufConverter argsToProtobufConverter,
+      required ProtobufConverter protobufConverter,
+      required MethodChannel bleMethodChannel,
+      required Stream<List<int>> connectedDeviceChannel,
+      required Stream<List<int>> charUpdateChannel,
+      required Stream<List<int>> bleDeviceScanChannel,
+      required Stream<List<int>> bleStatusChannel,
+      Logger? logger,
+      String? restorationKey})
+      : _argsToProtobufConverter = argsToProtobufConverter,
         _protobufConverter = protobufConverter,
         _bleMethodChannel = bleMethodChannel,
         _connectedDeviceRawStream = connectedDeviceChannel,
         _charUpdateRawStream = charUpdateChannel,
         _bleStatusRawChannel = bleStatusChannel,
         _bleDeviceScanRawStream = bleDeviceScanChannel,
-        _logger = logger;
+        _logger = logger,
+        _restorationKey = restorationKey;
 
   final ArgsToProtobufConverter _argsToProtobufConverter;
   final ProtobufConverter _protobufConverter;
@@ -31,6 +33,7 @@ class ReactiveBleMobilePlatform extends ReactiveBlePlatform {
   final Stream<List<int>> _bleDeviceScanRawStream;
   final Stream<List<int>> _bleStatusRawChannel;
   final Logger? _logger;
+  final String? _restorationKey;
 
   Stream<ConnectionStateUpdate>? _connectionUpdateStream;
   Stream<CharacteristicValue>? _charValueStream;
@@ -86,7 +89,11 @@ class ReactiveBleMobilePlatform extends ReactiveBlePlatform {
   @override
   Future<void> initialize() {
     _logger?.log('Initialize BLE platform');
-    return _bleMethodChannel.invokeMethod("initialize");
+    return _bleMethodChannel.invokeMethod(
+        "initialize",
+        _argsToProtobufConverter
+            .createInitializationRequest(_restorationKey)
+            .writeToBuffer());
   }
 
   @override
@@ -294,7 +301,7 @@ class ReactiveBleMobilePlatform extends ReactiveBlePlatform {
 class ReactiveBleMobilePlatformFactory {
   const ReactiveBleMobilePlatformFactory();
 
-  ReactiveBleMobilePlatform create({Logger? logger}) {
+  ReactiveBleMobilePlatform create({Logger? logger, String? restorationKey}) {
     const _bleMethodChannel = MethodChannel("flutter_reactive_ble_method");
 
     const connectedDeviceChannel =
@@ -304,18 +311,18 @@ class ReactiveBleMobilePlatformFactory {
     const bleStatusChannel = EventChannel("flutter_reactive_ble_status");
 
     return ReactiveBleMobilePlatform(
-      protobufConverter: const ProtobufConverterImpl(),
-      argsToProtobufConverter: const ArgsToProtobufConverterImpl(),
-      bleMethodChannel: _bleMethodChannel,
-      connectedDeviceChannel:
-          connectedDeviceChannel.receiveBroadcastStream().cast<List<int>>(),
-      charUpdateChannel:
-          charEventChannel.receiveBroadcastStream().cast<List<int>>(),
-      bleDeviceScanChannel:
-          scanEventChannel.receiveBroadcastStream().cast<List<int>>(),
-      bleStatusChannel:
-          bleStatusChannel.receiveBroadcastStream().cast<List<int>>(),
-      logger: logger,
-    );
+        protobufConverter: const ProtobufConverterImpl(),
+        argsToProtobufConverter: const ArgsToProtobufConverterImpl(),
+        bleMethodChannel: _bleMethodChannel,
+        connectedDeviceChannel:
+            connectedDeviceChannel.receiveBroadcastStream().cast<List<int>>(),
+        charUpdateChannel:
+            charEventChannel.receiveBroadcastStream().cast<List<int>>(),
+        bleDeviceScanChannel:
+            scanEventChannel.receiveBroadcastStream().cast<List<int>>(),
+        bleStatusChannel:
+            bleStatusChannel.receiveBroadcastStream().cast<List<int>>(),
+        logger: logger,
+        restorationKey: restorationKey);
   }
 }

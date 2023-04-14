@@ -25,7 +25,7 @@ final class PluginController {
     var connectedDeviceSink: EventSink?
     var characteristicValueUpdateSink: EventSink?
 
-    func initialize(name: String, completion: @escaping PlatformMethodCompletionHandler) {
+    func initialize(name: String, args: InitializationRequest, completion: @escaping PlatformMethodCompletionHandler) {
         if let central = central {
             central.stopScan()
             central.disconnectAll()
@@ -63,25 +63,33 @@ final class PluginController {
             },
             onConnectionChange: papply(weak: self) { context, central, peripheral, change in
                 let failure: (code: ConnectionFailure, message: String)?
+                let message: DeviceInfo?
 
                 switch change {
                 case .connected:
                     // Wait for services & characteristics to be discovered
                     return
+                case .restored: 
+                    message = DeviceInfo.with {
+                        $0.id = peripheral.identifier.uuidString
+                        $0.connectionState = encode(peripheral.state)
+                    }
+                    
                 case .failedToConnect(let underlyingError), .disconnected(let underlyingError):
                     failure = underlyingError.map { (.failedToConnect, "\($0)") }
-                }
-
-                let message = DeviceInfo.with {
-                    $0.id = peripheral.identifier.uuidString
-                    $0.connectionState = encode(peripheral.state)
-                    if let error = failure {
-                        $0.failure = GenericFailure.with {
-                            $0.code = Int32(error.code.rawValue)
-                            $0.message = error.message
+                    message = DeviceInfo.with {
+                        $0.id = peripheral.identifier.uuidString
+                        $0.connectionState = encode(peripheral.state)
+                        if let error = failure {
+                            $0.failure = GenericFailure.with {
+                                $0.code = Int32(error.code.rawValue)
+                                $0.message = error.message
+                            }
                         }
                     }
                 }
+
+                
 
                 context.connectedDeviceSink?.add(.success(message))
             },
@@ -127,7 +135,8 @@ final class PluginController {
                     context.messageQueue.append(message);
                 }
 
-            }
+            },
+            restorationKey: args.restorationKey
         )
 
         completion(.success(nil))

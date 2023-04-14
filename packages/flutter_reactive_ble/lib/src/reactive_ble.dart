@@ -15,8 +15,14 @@ import 'package:reactive_ble_platform_interface/reactive_ble_platform_interface.
 /// perform all the supported BLE operations.
 class FlutterReactiveBle {
   static final FlutterReactiveBle _sharedInstance = FlutterReactiveBle._();
+  static String? _restorationKey;
 
   factory FlutterReactiveBle() => _sharedInstance;
+
+  factory FlutterReactiveBle.withRestorationKey(String key) {
+    _restorationKey = key;
+    return _sharedInstance;
+  }
 
   ///Create a new instance where injected depedencies are used.
   @visibleForTesting
@@ -104,10 +110,8 @@ class FlutterReactiveBle {
         print,
       );
 
-      ReactiveBlePlatform.instance =
-          const ReactiveBleMobilePlatformFactory().create(
-        logger: _debugLogger,
-      );
+      ReactiveBlePlatform.instance = const ReactiveBleMobilePlatformFactory()
+          .create(logger: _debugLogger, restorationKey: _restorationKey);
 
       _blePlatform = ReactiveBlePlatform.instance;
 
