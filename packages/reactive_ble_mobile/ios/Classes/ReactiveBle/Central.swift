@@ -337,7 +337,7 @@ final class Central {
         return characteristic
     }
 
-    private enum Failure: Error, CustomStringConvertible {
+    public enum Failure: Error, CustomStringConvertible {
 
         case notPoweredOn(actualState: CBManagerState)
         case peripheralIsUnknown(PeripheralID)

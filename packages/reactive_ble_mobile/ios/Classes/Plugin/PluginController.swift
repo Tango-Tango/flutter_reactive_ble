@@ -72,7 +72,8 @@ final class PluginController {
                 case .restored: 
                     message = DeviceInfo.with {
                         $0.id = peripheral.identifier.uuidString
-                        $0.connectionState = encode(peripheral.state)
+                        /// The value for a restored device.
+                        $0.connectionState = 4
                     }
                     
                 case .failedToConnect(let underlyingError), .disconnected(let underlyingError):
@@ -377,6 +378,8 @@ final class PluginController {
                     completion(.success(nil))
                 }
             })
+        }  catch Central.Failure.peripheralIsUnknown {
+            completion(.success(nil))
         } catch {
             completion(.failure(PluginError.unknown(error).asFlutterError))
         }
