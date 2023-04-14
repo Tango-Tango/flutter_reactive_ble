@@ -35,7 +35,10 @@ enum DeviceConnectionState {
   disconnecting,
 
   /// Device is disconnected.
-  disconnected
+  disconnected,
+
+  /// Device is restored (iOS only - when using state restoration)
+  restored
 }
 
 /// Type of connection error.
