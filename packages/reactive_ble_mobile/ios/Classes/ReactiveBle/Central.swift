@@ -65,12 +65,11 @@ final class Central {
                     break
                 case .restored:
                     peripheral.delegate = self.peripheralDelegate
+                    central.activePeripherals[peripheral.identifier] = peripheral
                     break
                 case .failedToConnect(let error), .disconnected(let error):
                     central.eject(peripheral, error: error ?? PluginError.connectionLost)
                 }
-
-                NSLog("[SuperBlueToofs] Central received the event")
 
                 onConnectionChange(central, peripheral, change)
             }
