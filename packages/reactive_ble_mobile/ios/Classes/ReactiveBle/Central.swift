@@ -54,7 +54,7 @@ final class Central {
                 onStateChange(central, state)
             },
             onDiscovery: papply(weak: self, onDiscovery),
-            onConnectionChange: papply(weak: self) { central, peripheral, change in
+            onConnectionChange: papply(weak: self) { (central: Central, peripheral: CBPeripheral, change:ConnectionChange) -> Void in
                 central.connectRegistry.updateTask(
                     key: peripheral.identifier,
                     action: { $0.handleConnectionChange(change) }
@@ -66,6 +66,27 @@ final class Central {
                 case .restored:
                     peripheral.delegate = self.peripheralDelegate
                     central.activePeripherals[peripheral.identifier] = peripheral
+                    
+                    if (central.hasMissingServicesOrCharacteristics(for: peripheral)) {
+                        NSLog("flutter: Has missing services, discovering")
+                        // We're missing services, so schedule an discovery task
+                        // on all services / characteristics
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.300) {
+                            do {
+                                
+                                try central.discoverServicesWithCharacteristics(
+                                    for: peripheral.identifier,
+                                    discover: .all,
+                                    completion:central.onServicesWithCharacteristicsInitialDiscovery
+                                )
+                            } catch {
+                                return;
+                            }
+                        }
+                        
+                        return;
+                    }
+                    
                     break
                 case .failedToConnect(let error), .disconnected(let error):
                     central.eject(peripheral, error: error ?? PluginError.connectionLost)
@@ -335,6 +356,24 @@ final class Central {
         else { throw Failure.characteristicNotFound(qualifiedCharacteristic) }
 
         return characteristic
+    }
+
+    func hasMissingServicesOrCharacteristics(for peripheral: CBPeripheral) -> Bool {
+        // Check if services have been discovered.
+        // If services is nil, this indicates `discoverServices` has not been run
+        guard let services = peripheral.services, !services.isEmpty else {
+            return true
+        }
+
+        // Check if characteristics have been discovered for each service
+        // If a service exists, but no characteristics exists - we still need to discover.
+        for service in services {
+            guard let characteristics = service.characteristics, !characteristics.isEmpty else {
+                return true
+            }
+        }
+
+        return false
     }
 
     public enum Failure: Error, CustomStringConvertible {
