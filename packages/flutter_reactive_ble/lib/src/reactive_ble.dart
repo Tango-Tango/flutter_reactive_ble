@@ -316,6 +316,12 @@ class FlutterReactiveBle {
             ),
           );
 
+  /// Disconnects a device with the provided id.
+  ///
+  /// Useful for restored devices where a connection subscription is not obtained.
+  Future<void> disconnect({required String id}) =>
+      _blePlatform.disconnectDevice(id);
+
   /// Performs service discovery on the peripheral and returns the discovered services.
   ///
   /// When discovery fails this method throws an [Exception].
@@ -460,6 +466,16 @@ class FlutterReactiveBle {
           "Multiple matching characteristics found: $characteristic");
     }
     return chars.single;
+  }
+
+  /// Unsubscribes to updates from the characteristic specified.
+  ///
+  /// Useful for restored devices that do not read as "connected"
+  Future<void> unsubscribeToCharacteristic(
+    QualifiedCharacteristic characteristic,
+  ) async {
+    await initialize();
+    return _blePlatform.stopSubscribingToNotifications(characteristic);
   }
 
   /// Sets the verbosity of debug output.
