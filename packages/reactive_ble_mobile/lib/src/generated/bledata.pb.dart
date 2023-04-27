@@ -1756,6 +1756,47 @@ class DiscoveredCharacteristic extends $pb.GeneratedMessage {
   void clearIsIndicatable() => clearField(7);
 }
 
+class DeviceInfoCollection extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'DeviceInfoCollection', createEmptyInstance: create)
+    ..pc<DeviceInfo>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'devices', $pb.PbFieldType.PM, subBuilder: DeviceInfo.create)
+    ..hasRequiredFields = false
+  ;
+
+  DeviceInfoCollection._() : super();
+  factory DeviceInfoCollection({
+    $core.Iterable<DeviceInfo>? devices,
+  }) {
+    final _result = create();
+    if (devices != null) {
+      _result.devices.addAll(devices);
+    }
+    return _result;
+  }
+  factory DeviceInfoCollection.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory DeviceInfoCollection.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  DeviceInfoCollection clone() => DeviceInfoCollection()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  DeviceInfoCollection copyWith(void Function(DeviceInfoCollection) updates) => super.copyWith((message) => updates(message as DeviceInfoCollection)) as DeviceInfoCollection; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static DeviceInfoCollection create() => DeviceInfoCollection._();
+  DeviceInfoCollection createEmptyInstance() => create();
+  static $pb.PbList<DeviceInfoCollection> createRepeated() => $pb.PbList<DeviceInfoCollection>();
+  @$core.pragma('dart2js:noInline')
+  static DeviceInfoCollection getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<DeviceInfoCollection>(create);
+  static DeviceInfoCollection? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.List<DeviceInfo> get devices => $_getList(0);
+}
+
 class Uuid extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'Uuid', createEmptyInstance: create)
     ..a<$core.List<$core.int>>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'data', $pb.PbFieldType.OY)

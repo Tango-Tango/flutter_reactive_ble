@@ -99,6 +99,12 @@ abstract class ReactiveBlePlatform extends PlatformInterface {
     throw UnimplementedError('connectToDevice has not been implemented.');
   }
 
+  /// Gets connected devices and their connection state.
+  /// Useful when using iOS state restoration.
+  Future<List<ConnectionStateUpdate>> getConnectedDevices() {
+    throw UnimplementedError('getConnectedDevices has not been implemented');
+  }
+
   /// Operation that disconnects the host with the peripheral.
   Future<void> disconnectDevice(String deviceId) {
     throw UnimplementedError('disconnectDevice has not been implemented.');

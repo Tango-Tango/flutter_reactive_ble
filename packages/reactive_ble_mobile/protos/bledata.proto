@@ -145,6 +145,10 @@ message DiscoveredCharacteristic {
     bool isIndicatable = 7;
 }
 
+message DeviceInfoCollection {
+    repeated DeviceInfo devices = 1;
+}
+
 message Uuid {
     bytes data = 1;
 }

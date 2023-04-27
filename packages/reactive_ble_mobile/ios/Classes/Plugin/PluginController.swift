@@ -72,7 +72,7 @@ final class PluginController {
                 case .restored: 
                     message = DeviceInfo.with {
                         $0.id = peripheral.identifier.uuidString
-                        /// The value for a restored device.
+                        // Restored device state is different from peripheral state from connection manager
                         $0.connectionState = 4
                     }
                     
@@ -258,6 +258,30 @@ final class PluginController {
 
             sink.add(.success(message))
         }
+    }
+
+    func getConnectedDevices(name: String, completion: @escaping PlatformMethodCompletionHandler) {
+        guard let central = central
+        else {
+            completion(.failure(PluginError.notInitialized.asFlutterError))
+            return
+        }
+        
+        let devices = central.getConnectedDevices()
+
+        if let sink = connectedDeviceSink {
+            devices.forEach { device in 
+                sink.add(.success(device))
+            }
+        } else {
+            print("Warning! No event channel set up to report a connection update")
+        }
+        
+        let message = DeviceInfoCollection.with {
+            $0.devices = central.getConnectedDevices()
+        }
+
+        completion(.success(message))
     }
 
     func disconnectFromDevice(name: String, args: ConnectToDeviceRequest, completion: @escaping PlatformMethodCompletionHandler) {

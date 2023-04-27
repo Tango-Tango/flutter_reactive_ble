@@ -313,6 +313,16 @@ const DiscoveredCharacteristic$json = const {
 
 /// Descriptor for `DiscoveredCharacteristic`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List discoveredCharacteristicDescriptor = $convert.base64Decode('ChhEaXNjb3ZlcmVkQ2hhcmFjdGVyaXN0aWMSMQoQY2hhcmFjdGVyaXN0aWNJZBgBIAEoCzIFLlV1aWRSEGNoYXJhY3RlcmlzdGljSWQSIwoJc2VydmljZUlkGAIgASgLMgUuVXVpZFIJc2VydmljZUlkEh4KCmlzUmVhZGFibGUYAyABKAhSCmlzUmVhZGFibGUSNgoWaXNXcml0YWJsZVdpdGhSZXNwb25zZRgEIAEoCFIWaXNXcml0YWJsZVdpdGhSZXNwb25zZRI8Chlpc1dyaXRhYmxlV2l0aG91dFJlc3BvbnNlGAUgASgIUhlpc1dyaXRhYmxlV2l0aG91dFJlc3BvbnNlEiIKDGlzTm90aWZpYWJsZRgGIAEoCFIMaXNOb3RpZmlhYmxlEiQKDWlzSW5kaWNhdGFibGUYByABKAhSDWlzSW5kaWNhdGFibGU=');
+@$core.Deprecated('Use deviceInfoCollectionDescriptor instead')
+const DeviceInfoCollection$json = const {
+  '1': 'DeviceInfoCollection',
+  '2': const [
+    const {'1': 'devices', '3': 1, '4': 3, '5': 11, '6': '.DeviceInfo', '10': 'devices'},
+  ],
+};
+
+/// Descriptor for `DeviceInfoCollection`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List deviceInfoCollectionDescriptor = $convert.base64Decode('ChREZXZpY2VJbmZvQ29sbGVjdGlvbhIlCgdkZXZpY2VzGAEgAygLMgsuRGV2aWNlSW5mb1IHZGV2aWNlcw==');
 @$core.Deprecated('Use uuidDescriptor instead')
 const Uuid$json = const {
   '1': 'Uuid',

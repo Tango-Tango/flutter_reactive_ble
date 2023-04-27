@@ -300,6 +300,13 @@ class FlutterReactiveBle {
             ),
           );
 
+  /// Gets a list of connection states for connected devices
+  /// Useful when restoring devices via iOS state restoration
+  Future<List<ConnectionStateUpdate>> getConnectedDevices() async {
+    await initialize();
+    return _blePlatform.getConnectedDevices();
+  }
+
   /// Disconnects a device with the provided id.
   ///
   /// Useful for restored devices where a connection subscription is not obtained.

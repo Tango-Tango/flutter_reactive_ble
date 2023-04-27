@@ -66,28 +66,36 @@ final class Central {
                 case .restored:
                     peripheral.delegate = self.peripheralDelegate
                     central.activePeripherals[peripheral.identifier] = peripheral
-                    
-                    if (central.hasMissingServicesOrCharacteristics(for: peripheral)) {
-                        NSLog("flutter: Has missing services, discovering")
-                        // We're missing services, so schedule an discovery task
-                        // on all services / characteristics
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.300) {
-                            do {
-                                
-                                try central.discoverServicesWithCharacteristics(
-                                    for: peripheral.identifier,
-                                    discover: .all,
-                                    completion:central.onServicesWithCharacteristicsInitialDiscovery
-                                )
-                            } catch {
-                                return;
-                            }
-                        }
-                        
-                        return;
+
+                    // If a restored device has services that are reporting characteristics
+                    // it's likely that we have all the services and characteristics previously
+                    // discovered for the device.
+                    //
+                    // However, if we have no services OR have services that have no characteristics
+                    // (according to Apple docs - if characteristics of a service are nil, they've not been discovered)
+                    // we must discover services on the device to properly subscribe to them upon restoration
+                    if (!central.hasMissingServicesOrCharacteristics(for: peripheral)) {
+                        break
                     }
-                    
-                    break
+
+                    onConnectionChange(central, peripheral, .connected)
+                    // We're missing services, so schedule an discovery task
+                    // on all services / characteristics
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.300) {
+                        do {
+                            
+                            try central.discoverServicesWithCharacteristics(
+                                for: peripheral.identifier,
+                                discover: .all,
+                                completion:central.onServicesWithCharacteristicsInitialDiscovery
+                            )
+                        } catch {
+                            print("Error restoring services or characteristics for peripheral. ID: \(peripheral.identifier) Error: \(error)")
+                        }
+                    }
+
+                    return
+
                 case .failedToConnect(let error), .disconnected(let error):
                     central.eject(peripheral, error: error ?? PluginError.connectionLost)
                 }
@@ -146,6 +154,15 @@ final class Central {
     func stopScan() {
         centralManager.stopScan()
         isScanning = false
+    }
+
+    func getConnectedDevices() -> [DeviceInfo] {
+        return activePeripherals.map { _, peripheral in
+            return DeviceInfo.with {
+                $0.id = peripheral.identifier.uuidString
+                $0.connectionState = encode(peripheral.state)
+            }
+        }
     }
 
     func connect(to peripheralID: PeripheralID, discover servicesWithCharacteristicsToDiscover: ServicesWithCharacteristicsToDiscover, timeout: TimeInterval?) throws {
