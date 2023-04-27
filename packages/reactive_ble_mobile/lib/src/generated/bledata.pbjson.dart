@@ -452,6 +452,19 @@ const ReadRssiResult$json = {
 final $typed_data.Uint8List readRssiResultDescriptor = $convert.base64Decode(
     'Cg5SZWFkUnNzaVJlc3VsdBISCgRyc3NpGAEgASgFUgRyc3Np');
 
+@$core.Deprecated('Use deviceInfoCollectionDescriptor instead')
+const DeviceInfoCollection$json = {
+  '1': 'DeviceInfoCollection',
+  '2': [
+    {'1': 'devices', '3': 1, '4': 3, '5': 11, '6': '.DeviceInfo', '10': 'devices'},
+  ],
+};
+
+/// Descriptor for `DeviceInfoCollection`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List deviceInfoCollectionDescriptor = $convert.base64Decode(
+    'ChREZXZpY2VJbmZvQ29sbGVjdGlvbhIlCgdkZXZpY2VzGAEgAygLMgsuRGV2aWNlSW5mb1IHZG'
+    'V2aWNlcw==');
+
 @$core.Deprecated('Use uuidDescriptor instead')
 const Uuid$json = {
   '1': 'Uuid',

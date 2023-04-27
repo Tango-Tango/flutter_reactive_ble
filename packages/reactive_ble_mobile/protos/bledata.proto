@@ -158,6 +158,10 @@ message ReadRssiResult {
     int32 rssi = 1;
 }
 
+message DeviceInfoCollection {
+    repeated DeviceInfo devices = 1;
+}
+
 message Uuid {
     bytes data = 1;
 }

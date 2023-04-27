@@ -149,6 +149,18 @@ class ReactiveBleMobilePlatform extends ReactiveBlePlatform {
   }
 
   @override
+  Future<List<ConnectionStateUpdate>> getConnectedDevices() {
+    _logger?.log(
+      'Get connected devices',
+    );
+    return _bleMethodChannel
+        .invokeMethod<List<int>>(
+          "getConnectedDevices",
+        )
+        .then((data) => _protobufConverter.connectedDevicesFrom(data!));
+  }
+
+  @override
   Future<void> disconnectDevice(String deviceId) {
     _logger?.log(
       'Disconnect device: $deviceId',
