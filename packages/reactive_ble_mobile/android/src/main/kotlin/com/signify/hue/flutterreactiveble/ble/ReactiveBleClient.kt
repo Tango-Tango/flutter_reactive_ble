@@ -18,6 +18,7 @@ import com.polidea.rxandroidble2.scan.ScanSettings
 import com.signify.hue.flutterreactiveble.ble.extensions.writeCharWithResponse
 import com.signify.hue.flutterreactiveble.ble.extensions.writeCharWithoutResponse
 import com.signify.hue.flutterreactiveble.converters.extractManufacturerData
+import com.signify.hue.flutterreactiveble.model.ConnectionState
 import com.signify.hue.flutterreactiveble.model.ScanMode
 import com.signify.hue.flutterreactiveble.model.toScanSettings
 import com.signify.hue.flutterreactiveble.utils.Duration
@@ -115,6 +116,11 @@ open class ReactiveBleClient(private val context: Context) : BleClient {
                 )
             })
         )
+    }
+
+    override fun getConnectedDevices(): List<ConnectionUpdateSuccess> {
+        return activeConnections.keys.toList()
+            .map { ConnectionUpdateSuccess(it, ConnectionState.CONNECTED.code) }
     }
 
     override fun disconnectDevice(deviceId: String) {

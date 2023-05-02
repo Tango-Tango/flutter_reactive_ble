@@ -36,7 +36,8 @@ class PluginController {
             "stopNotifications" to this::stopNotifications,
             "negotiateMtuSize" to this::negotiateMtuSize,
             "requestConnectionPriority" to this::requestConnectionPriority,
-            "discoverServices" to this::discoverServices
+            "discoverServices" to this::discoverServices,
+            "getConnectedDevices" to this::getConnectedDevices
     )
 
     lateinit var bleClient: com.signify.hue.flutterreactiveble.ble.BleClient
@@ -266,5 +267,12 @@ class PluginController {
                     throwable -> result.error("service_discovery_failure", throwable.message, null)
                 })
                 .discard()
+    }
+
+    private fun getConnectedDevices(call: MethodCall, result: Result) {
+        val devices = bleClient.getConnectedDevices().map{ protoConverter.convertToDeviceInfo(it) }
+        val message = pb.DeviceInfoCollection.newBuilder()
+        devices.forEachIndexed { index, device -> message.setDevices(index, device)}
+        result.success(message.build().toByteArray())
     }
 }
