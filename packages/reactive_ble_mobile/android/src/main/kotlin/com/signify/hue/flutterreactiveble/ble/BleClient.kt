@@ -27,6 +27,8 @@ interface BleClient {
         timeout: Duration,
     )
 
+    fun getConnectedDevices(): List<com.signify.hue.flutterreactiveble.ble.ConnectionUpdateSuccess>
+    
     fun disconnectDevice(deviceId: String)
 
     fun disconnectAllDevices()
