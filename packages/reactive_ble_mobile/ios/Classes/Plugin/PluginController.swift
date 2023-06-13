@@ -73,7 +73,7 @@ final class PluginController {
                     message = DeviceInfo.with {
                         $0.id = peripheral.identifier.uuidString
                         // Restored device state is different from peripheral state from connection manager
-                        $0.connectionState = encode(.connected)
+                        $0.connectionState = 4
                     }
                     
                 case .failedToConnect(let underlyingError), .disconnected(let underlyingError):
