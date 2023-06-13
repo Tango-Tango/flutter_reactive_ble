@@ -272,9 +272,7 @@ class PluginController {
     private fun getConnectedDevices(call: MethodCall, result: Result) {
         val devices = bleClient.getConnectedDevices().map{ protoConverter.convertToDeviceInfo(it) }
         val message = pb.DeviceInfoCollection.newBuilder()
-        if (devices.isNotEmpty()) {
-            devices.forEachIndexed { index, device -> message.setDevices(index, device)}
-        }
+        devices.forEach { device -> message.addDevices(device)}
         result.success(message.build().toByteArray())
     }
 }
