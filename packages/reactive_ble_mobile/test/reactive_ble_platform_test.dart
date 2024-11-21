@@ -22,6 +22,8 @@ import 'reactive_ble_platform_test.mocks.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   group('$ReactiveBleMobilePlatform', () {
+    const restorationKey = 'key';
+
     late ReactiveBleMobilePlatform _sut;
     late MockMethodChannel _methodChannel;
     late ArgsToProtobufConverter _argsConverter;
@@ -52,6 +54,7 @@ void main() {
         charUpdateChannel: _argsStreamController.stream,
         bleDeviceScanChannel: _scanStreamController.stream,
         bleStatusChannel: _statusStreamController.stream,
+        restorationKey: restorationKey,
       );
     });
 
@@ -272,8 +275,8 @@ void main() {
         );
 
         expectedResult = WriteCharacteristicInfo(
-            characteristic: characteristic,
-            result: const Result.success(Unit()),
+          characteristic: characteristic,
+          result: const Result.success(Unit()),
         );
 
         when(_methodChannel.invokeMethod<List<int>?>(any, any)).thenAnswer(
@@ -525,12 +528,20 @@ void main() {
     });
 
     group('initialize', () {
+      late pb.InitializationRequest request;
+
       setUp(() async {
+        request = pb.InitializationRequest(restorationKey: restorationKey);
+        when(_argsConverter.createInitializationRequest(restorationKey))
+            .thenReturn(request);
+
         await _sut.initialize();
       });
       test('It invokes correct method in method channel', () {
-        verify(_methodChannel.invokeMethod<void>('initialize')).called(1);
-        expect(true, true);
+        verify(_methodChannel.invokeMethod<void>(
+          'initialize',
+          request.writeToBuffer(),
+        )).called(1);
       });
     });
 

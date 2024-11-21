@@ -2,6 +2,10 @@ syntax = "proto3";
 option java_package = "com.signify.hue.flutterreactiveble";
 option java_outer_classname = "ProtobufModel";
 
+message InitializationRequest {
+     string restorationKey = 1;
+}
+
 message ScanForDevicesRequest {
     repeated Uuid serviceUuids = 1;
     int32 scanMode = 2;

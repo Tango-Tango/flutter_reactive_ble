@@ -26,6 +26,7 @@ final class Central {
     private var peripheralDelegate: PeripheralDelegate!
     private var centralManagerDelegate: CentralManagerDelegate!
     private var centralManager: CBCentralManager!
+    private var restorationKey: String?
 
     private(set) var isScanning = false
     private(set) var activePeripherals = [PeripheralID: CBPeripheral]()
@@ -40,7 +41,8 @@ final class Central {
         onDiscovery: @escaping DiscoveryHandler,
         onConnectionChange: @escaping ConnectionChangeHandler,
         onServicesWithCharacteristicsInitialDiscovery: @escaping ServicesWithCharacteristicsDiscoveryHandler,
-        onCharacteristicValueUpdate: @escaping CharacteristicValueUpdateHandler
+        onCharacteristicValueUpdate: @escaping CharacteristicValueUpdateHandler,
+        restorationKey: String?
     ) {
         self.onServicesWithCharacteristicsInitialDiscovery = onServicesWithCharacteristicsInitialDiscovery
         self.centralManagerDelegate = CentralManagerDelegate(
@@ -63,6 +65,9 @@ final class Central {
 
                 switch change {
                 case .connected:
+                    break
+                case .restored:
+                    peripheral.delegate = self.peripheralDelegate
                     break
                 case .failedToConnect(let error), .disconnected(let error):
                     central.eject(peripheral, error: error ?? PluginError.connectionLost)
@@ -121,9 +126,11 @@ final class Central {
                 )
             }
         )
+        self.restorationKey = restorationKey
         self.centralManager = CBCentralManager(
             delegate: centralManagerDelegate,
-            queue: nil
+            queue: nil,
+            options: if let key = restorationKey { [CBCentralManagerOptionRestoreIdentifierKey: key] } else { nil }
         )
     }
 
@@ -167,7 +174,7 @@ final class Central {
                         discover: servicesWithCharacteristicsToDiscover,
                         completion: central.onServicesWithCharacteristicsInitialDiscovery
                     )
-                case .failedToConnect, .disconnected:
+                case .restored, .failedToConnect, .disconnected:
                     break
                 }
             }

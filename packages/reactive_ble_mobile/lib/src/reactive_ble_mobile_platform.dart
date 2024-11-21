@@ -14,6 +14,7 @@ class ReactiveBleMobilePlatform extends ReactiveBlePlatform {
     required Stream<List<int>> bleDeviceScanChannel,
     required Stream<List<int>> bleStatusChannel,
     Logger? logger,
+    String? restorationKey,
   })  : _argsToProtobufConverter = argsToProtobufConverter,
         _protobufConverter = protobufConverter,
         _bleMethodChannel = bleMethodChannel,
@@ -21,7 +22,8 @@ class ReactiveBleMobilePlatform extends ReactiveBlePlatform {
         _charUpdateRawStream = charUpdateChannel,
         _bleStatusRawChannel = bleStatusChannel,
         _bleDeviceScanRawStream = bleDeviceScanChannel,
-        _logger = logger;
+        _logger = logger,
+        _restorationKey = restorationKey;
 
   final ArgsToProtobufConverter _argsToProtobufConverter;
   final ProtobufConverter _protobufConverter;
@@ -31,6 +33,7 @@ class ReactiveBleMobilePlatform extends ReactiveBlePlatform {
   final Stream<List<int>> _bleDeviceScanRawStream;
   final Stream<List<int>> _bleStatusRawChannel;
   final Logger? _logger;
+  final String? _restorationKey;
 
   Stream<ConnectionStateUpdate>? _connectionUpdateStream;
   Stream<CharacteristicValue>? _charValueStream;
@@ -86,7 +89,11 @@ class ReactiveBleMobilePlatform extends ReactiveBlePlatform {
   @override
   Future<void> initialize() {
     _logger?.log('Initialize BLE platform');
-    return _bleMethodChannel.invokeMethod("initialize");
+    return _bleMethodChannel.invokeMethod(
+        "initialize",
+        _argsToProtobufConverter
+            .createInitializationRequest(_restorationKey)
+            .writeToBuffer());
   }
 
   @override
@@ -317,7 +324,7 @@ class ReactiveBleMobilePlatform extends ReactiveBlePlatform {
 class ReactiveBleMobilePlatformFactory {
   const ReactiveBleMobilePlatformFactory();
 
-  ReactiveBleMobilePlatform create({Logger? logger}) {
+  ReactiveBleMobilePlatform create({Logger? logger, String? restorationKey}) {
     const _bleMethodChannel = MethodChannel("flutter_reactive_ble_method");
 
     const connectedDeviceChannel =
@@ -339,6 +346,7 @@ class ReactiveBleMobilePlatformFactory {
       bleStatusChannel:
           bleStatusChannel.receiveBroadcastStream().cast<List<int>>(),
       logger: logger,
+      restorationKey: restorationKey,
     );
   }
 }
