@@ -475,7 +475,8 @@ class FlutterReactiveBle {
     QualifiedCharacteristic characteristic,
   ) async {
     await initialize();
-    return _blePlatform.stopSubscribingToNotifications(characteristic);
+    final instance = (await resolveSingle(characteristic))._ids;
+    return _blePlatform.stopSubscribingToNotifications(instance);
   }
 
   /// Sets the verbosity of debug output.
