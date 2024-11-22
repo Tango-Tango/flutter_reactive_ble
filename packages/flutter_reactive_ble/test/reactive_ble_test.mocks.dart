@@ -183,6 +183,17 @@ class MockReactiveBlePlatform extends _i1.Mock
       ) as _i4.Stream<void>);
 
   @override
+  _i4.Future<List<_i2.ConnectionStateUpdate>> getConnectedDevices() =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getConnectedDevices,
+          [],
+        ),
+        returnValue: _i4.Future<List<_i2.ConnectionStateUpdate>>.value(
+            <_i2.ConnectionStateUpdate>[]),
+      ) as _i4.Future<List<_i2.ConnectionStateUpdate>>);
+
+  @override
   _i4.Future<void> disconnectDevice(String? deviceId) => (super.noSuchMethod(
         Invocation.method(
           #disconnectDevice,

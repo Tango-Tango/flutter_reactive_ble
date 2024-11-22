@@ -585,6 +585,16 @@ class MockProtobufConverter extends _i1.Mock implements _i7.ProtobufConverter {
       ) as _i3.ConnectionStateUpdate);
 
   @override
+  List<_i3.ConnectionStateUpdate> connectedDevicesFrom(List<int>? data) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #connectedDevicesFrom,
+          [data],
+        ),
+        returnValue: <_i3.ConnectionStateUpdate>[],
+      ) as List<_i3.ConnectionStateUpdate>);
+
+  @override
   _i3.Result<_i3.Unit, _i3.GenericFailure<_i3.ClearGattCacheError>?>
       clearGattCacheResultFrom(List<int>? data) => (super.noSuchMethod(
             Invocation.method(
