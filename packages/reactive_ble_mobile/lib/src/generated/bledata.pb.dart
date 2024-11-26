@@ -435,6 +435,122 @@ class DeviceInfo extends $pb.GeneratedMessage {
   GenericFailure ensureFailure() => $_ensure(2);
 }
 
+class RestoredDeviceInfo extends $pb.GeneratedMessage {
+  factory RestoredDeviceInfo({
+    $core.String? id,
+    $core.String? name,
+    $core.Iterable<CharacteristicAddress>? subscriptions,
+  }) {
+    final $result = create();
+    if (id != null) {
+      $result.id = id;
+    }
+    if (name != null) {
+      $result.name = name;
+    }
+    if (subscriptions != null) {
+      $result.subscriptions.addAll(subscriptions);
+    }
+    return $result;
+  }
+  RestoredDeviceInfo._() : super();
+  factory RestoredDeviceInfo.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory RestoredDeviceInfo.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'RestoredDeviceInfo', createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'id')
+    ..aOS(2, _omitFieldNames ? '' : 'name')
+    ..pc<CharacteristicAddress>(3, _omitFieldNames ? '' : 'subscriptions', $pb.PbFieldType.PM, subBuilder: CharacteristicAddress.create)
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  RestoredDeviceInfo clone() => RestoredDeviceInfo()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  RestoredDeviceInfo copyWith(void Function(RestoredDeviceInfo) updates) => super.copyWith((message) => updates(message as RestoredDeviceInfo)) as RestoredDeviceInfo;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static RestoredDeviceInfo create() => RestoredDeviceInfo._();
+  RestoredDeviceInfo createEmptyInstance() => create();
+  static $pb.PbList<RestoredDeviceInfo> createRepeated() => $pb.PbList<RestoredDeviceInfo>();
+  @$core.pragma('dart2js:noInline')
+  static RestoredDeviceInfo getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<RestoredDeviceInfo>(create);
+  static RestoredDeviceInfo? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get id => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set id($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearId() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.String get name => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set name($core.String v) { $_setString(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasName() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearName() => clearField(2);
+
+  @$pb.TagNumber(3)
+  $core.List<CharacteristicAddress> get subscriptions => $_getList(2);
+}
+
+class RestoredDeviceInfoCollection extends $pb.GeneratedMessage {
+  factory RestoredDeviceInfoCollection({
+    $core.Iterable<RestoredDeviceInfo>? devices,
+  }) {
+    final $result = create();
+    if (devices != null) {
+      $result.devices.addAll(devices);
+    }
+    return $result;
+  }
+  RestoredDeviceInfoCollection._() : super();
+  factory RestoredDeviceInfoCollection.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory RestoredDeviceInfoCollection.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'RestoredDeviceInfoCollection', createEmptyInstance: create)
+    ..pc<RestoredDeviceInfo>(1, _omitFieldNames ? '' : 'devices', $pb.PbFieldType.PM, subBuilder: RestoredDeviceInfo.create)
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  RestoredDeviceInfoCollection clone() => RestoredDeviceInfoCollection()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  RestoredDeviceInfoCollection copyWith(void Function(RestoredDeviceInfoCollection) updates) => super.copyWith((message) => updates(message as RestoredDeviceInfoCollection)) as RestoredDeviceInfoCollection;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static RestoredDeviceInfoCollection create() => RestoredDeviceInfoCollection._();
+  RestoredDeviceInfoCollection createEmptyInstance() => create();
+  static $pb.PbList<RestoredDeviceInfoCollection> createRepeated() => $pb.PbList<RestoredDeviceInfoCollection>();
+  @$core.pragma('dart2js:noInline')
+  static RestoredDeviceInfoCollection getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<RestoredDeviceInfoCollection>(create);
+  static RestoredDeviceInfoCollection? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.List<RestoredDeviceInfo> get devices => $_getList(0);
+}
+
 class DisconnectFromDeviceRequest extends $pb.GeneratedMessage {
   factory DisconnectFromDeviceRequest({
     $core.String? deviceId,

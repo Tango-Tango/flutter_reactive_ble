@@ -23,7 +23,9 @@ final class PluginController {
         }
     }
     var messageQueue: [CharacteristicValueInfo] = []
+    var restoredDeviceQueue: [RestoredDeviceInfo] = []
     var connectedDeviceSink: EventSink?
+    var restoredDeviceSink: EventSink?
     var characteristicValueUpdateSink: EventSink?
 
     func initialize(name: String, args: InitializationRequest, completion: @escaping PlatformMethodCompletionHandler) {
@@ -77,13 +79,6 @@ final class PluginController {
                 case .connected:
                     // Wait for services & characteristics to be discovered
                     return
-                case .restored: 
-                    message = DeviceInfo.with {
-                        $0.id = peripheral.identifier.uuidString
-                        // Restored device state is different from peripheral state from connection manager
-                        $0.connectionState = 4
-                    }
-                    
                 case .failedToConnect(let underlyingError), .disconnected(let underlyingError):
                     failure = underlyingError.map { (.failedToConnect, "\($0)") }
                     message = DeviceInfo.with {
@@ -146,6 +141,23 @@ final class PluginController {
                     context.messageQueue.append(message)
                 }
 
+            },
+            onPeripheralsRestored: papply(weak: self) { (context, central, peripherals) -> Void in
+                let message = RestoredDeviceInfoCollection.with {
+                    $0.devices = peripherals.map({ peripheral in
+                        RestoredDeviceInfo.with {
+                            $0.id = peripheral.identifier.uuidString
+                            $0.name = peripheral.name
+                            $0.subscriptions = peripheral.subscriptions
+                        }
+                    })
+                }
+                
+                if let sink = context.restoredDeviceSink {
+                    sink.add(.success(message))
+                } else {
+                    context.restoredDeviceQueue.append(contentsOf: message.devices)
+                }
             },
             restorationKey: args.restorationKey
         )
@@ -267,30 +279,6 @@ final class PluginController {
 
             sink.add(.success(message))
         }
-    }
-
-    func getConnectedDevices(name: String, completion: @escaping PlatformMethodCompletionHandler) {
-        guard let central = central
-        else {
-            completion(.failure(PluginError.notInitialized.asFlutterError))
-            return
-        }
-        
-        let devices = central.getConnectedDevices()
-
-        if let sink = connectedDeviceSink {
-            devices.forEach { device in 
-                sink.add(.success(device))
-            }
-        } else {
-            print("Warning! No event channel set up to report a connection update")
-        }
-        
-        let message = DeviceInfoCollection.with {
-            $0.devices = central.getConnectedDevices()
-        }
-
-        completion(.success(message))
     }
 
     func disconnectFromDevice(name: String, args: ConnectToDeviceRequest, completion: @escaping PlatformMethodCompletionHandler) {

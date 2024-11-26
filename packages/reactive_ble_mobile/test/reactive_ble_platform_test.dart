@@ -29,6 +29,7 @@ void main() {
     late ArgsToProtobufConverter _argsConverter;
     late ProtobufConverter _protobufConverter;
     late StreamController<List<int>> _connectedDeviceStreamController;
+    late StreamController<List<int>> _restoredDeviceStreamController;
     late StreamController<List<int>> _argsStreamController;
     late StreamController<List<int>> _scanStreamController;
     late StreamController<List<int>> _statusStreamController;
@@ -38,6 +39,7 @@ void main() {
       _methodChannel = MockMethodChannel();
       _protobufConverter = MockProtobufConverter();
       _connectedDeviceStreamController = StreamController();
+      _restoredDeviceStreamController = StreamController();
       _argsStreamController = StreamController();
       _scanStreamController = StreamController();
       _statusStreamController = StreamController();
@@ -51,6 +53,7 @@ void main() {
         bleMethodChannel: _methodChannel,
         protobufConverter: _protobufConverter,
         connectedDeviceChannel: _connectedDeviceStreamController.stream,
+        restoredDeviceChannel: _restoredDeviceStreamController.stream,
         charUpdateChannel: _argsStreamController.stream,
         bleDeviceScanChannel: _scanStreamController.stream,
         bleStatusChannel: _statusStreamController.stream,
@@ -60,6 +63,7 @@ void main() {
 
     tearDown(() {
       _connectedDeviceStreamController.close();
+      _restoredDeviceStreamController.close();
       _argsStreamController.close();
       _scanStreamController.close();
       _statusStreamController.close();

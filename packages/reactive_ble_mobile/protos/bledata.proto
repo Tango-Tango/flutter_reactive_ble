@@ -35,6 +35,16 @@ message DeviceInfo {
     GenericFailure failure = 3;
 }
 
+message RestoredDeviceInfo {
+    string id = 1;
+    string name = 2;
+    repeated CharacteristicAddress subscriptions = 3;
+}
+
+message RestoredDeviceInfoCollection {
+    repeated RestoredDeviceInfo devices = 1;
+}
+
 message DisconnectFromDeviceRequest {
     string deviceId = 1;
 }

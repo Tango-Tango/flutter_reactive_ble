@@ -49,6 +49,14 @@ abstract class ReactiveBlePlatform extends PlatformInterface {
     throw UnimplementedError('connectionStream has not been implemented.');
   }
 
+  /// Listen to this stream to get devices restored on initialization.
+  ///
+  /// It is important to subscribe to this stream before calling [initialize]
+  /// since it can happen that some results are missed.
+  Stream<RestoredPeripheral> get restoredDeviceStream {
+    throw UnimplementedError('restoreDeviceStream has not been implemented.');
+  }
+
   /// Stream that provides value updates about the characteristics that are read
   /// or subscribed to.
   Stream<CharacteristicValue> get charValueUpdateStream {
@@ -102,12 +110,6 @@ abstract class ReactiveBlePlatform extends PlatformInterface {
     Duration? connectionTimeout,
   ) {
     throw UnimplementedError('connectToDevice has not been implemented.');
-  }
-
-  /// Gets connected devices and their connection state.
-  /// Useful when using iOS state restoration.
-  Future<List<ConnectionStateUpdate>> getConnectedDevices() {
-    throw UnimplementedError('getConnectedDevices has not been implemented');
   }
 
   /// Operation that disconnects the host with the peripheral.

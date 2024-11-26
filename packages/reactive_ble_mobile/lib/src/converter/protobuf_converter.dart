@@ -11,7 +11,7 @@ abstract class ProtobufConverter {
 
   ConnectionStateUpdate connectionStateUpdateFrom(List<int> data);
 
-  List<ConnectionStateUpdate> connectedDevicesFrom(List<int> data);
+  List<RestoredPeripheral> restoredDevicesFrom(List<int> data);
 
   Result<Unit, GenericFailure<ClearGattCacheError>?> clearGattCacheResultFrom(
     List<int> data,
@@ -97,23 +97,20 @@ class ProtobufConverterImpl implements ProtobufConverter {
   }
 
   @override
-  List<ConnectionStateUpdate> connectedDevicesFrom(List<int> data) {
-    final collection = pb.DeviceInfoCollection.fromBuffer(data);
+  List<RestoredPeripheral> restoredDevicesFrom(List<int> data) {
+    final collection = pb.RestoredDeviceInfoCollection.fromBuffer(data);
 
     return collection.devices
-        .map((info) => ConnectionStateUpdate(
-              deviceId: info.id,
-              connectionState: selectFrom(
-                DeviceConnectionState.values,
-                index: info.connectionState,
-                fallback: (int? raw) => throw _InvalidConnectionState(raw),
-              ),
-              failure: genericFailureFrom(
-                hasFailure: info.hasFailure(),
-                getFailure: () => info.failure,
-                codes: ConnectionError.values,
-                fallback: (int? rawOrNull) => ConnectionError.unknown,
-              ),
+        .map((info) => RestoredPeripheral(
+              id: info.id,
+              name: info.name,
+              subscriptions: info.subscriptions
+                  .map((address) => QualifiedCharacteristic(
+                        characteristicId: Uuid(address.characteristicUuid.data),
+                        serviceId: Uuid(address.serviceUuid.data),
+                        deviceId: info.id,
+                      ))
+                  .toList(),
             ))
         .toList();
   }

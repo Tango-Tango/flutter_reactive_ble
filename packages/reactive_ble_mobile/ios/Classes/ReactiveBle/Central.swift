@@ -20,6 +20,7 @@ final class Central {
     typealias CharacteristicNotifyCompletionHandler = (Central, Error?) -> Void
     typealias CharacteristicValueUpdateHandler = (Central, CharacteristicInstance, Data?, Error?) -> Void
     typealias CharacteristicWriteCompletionHandler = (Central, CharacteristicInstance, Error?) -> Void
+    typealias PeripheralsRestoredHandler = (Central, [RestoredPeripheral]) -> Void
 
     private let onServicesWithCharacteristicsInitialDiscovery: ServicesWithCharacteristicsDiscoveryHandler
 
@@ -30,6 +31,7 @@ final class Central {
 
     private(set) var isScanning = false
     private(set) var activePeripherals = [PeripheralID: CBPeripheral]()
+    private(set) var restoredPeripherals = [PeripheralID: RestoredPeripheral]()
     private(set) var connectRegistry = PeripheralTaskRegistry<ConnectTaskController>()
     private let servicesWithCharacteristicsDiscoveryRegistry = PeripheralTaskRegistry<ServicesWithCharacteristicsDiscoveryTaskController>()
     private let characteristicNotifyRegistry = PeripheralTaskRegistry<CharacteristicNotifyTaskController>()
@@ -42,6 +44,7 @@ final class Central {
         onConnectionChange: @escaping ConnectionChangeHandler,
         onServicesWithCharacteristicsInitialDiscovery: @escaping ServicesWithCharacteristicsDiscoveryHandler,
         onCharacteristicValueUpdate: @escaping CharacteristicValueUpdateHandler,
+        onPeripheralsRestored: @escaping PeripheralsRestoredHandler,
         restorationKey: String?
     ) {
         self.onServicesWithCharacteristicsInitialDiscovery = onServicesWithCharacteristicsInitialDiscovery
@@ -66,44 +69,42 @@ final class Central {
                 switch change {
                 case .connected:
                     break
-                case .restored:
-                    peripheral.delegate = self.peripheralDelegate
-                    central.activePeripherals[peripheral.identifier] = peripheral
-
-                    // If a restored device has services that are reporting characteristics
-                    // it's likely that we have all the services and characteristics previously
-                    // discovered for the device.
-                    //
-                    // However, if we have no services OR have services that have no characteristics
-                    // (according to Apple docs - if characteristics of a service are nil, they've not been discovered)
-                    // we must discover services on the device to properly subscribe to them upon restoration
-                    if (!central.hasMissingServicesOrCharacteristics(for: peripheral)) {
-                        break
-                    }
-
-                    onConnectionChange(central, peripheral, .connected)
-                    // We're missing services, so schedule an discovery task
-                    // on all services / characteristics
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.300) {
-                        do {
-                            
-                            try central.discoverServicesWithCharacteristics(
-                                for: peripheral.identifier,
-                                discover: .all,
-                                completion:central.onServicesWithCharacteristicsInitialDiscovery
-                            )
-                        } catch {
-                            print("Error restoring services or characteristics for peripheral. ID: \(peripheral.identifier) Error: \(error)")
-                        }
-                    }
-
-                    return
-
                 case .failedToConnect(let error), .disconnected(let error):
                     central.eject(peripheral, error: error ?? PluginError.connectionLost)
                 }
 
                 onConnectionChange(central, peripheral, change)
+            },
+            onPeripheralsRestored: papply(weak: self) { (central: Central, peripherals: [CBPeripheral]) -> Void in
+                peripherals.forEach {
+                    $0.delegate = self.peripheralDelegate
+                    central.activePeripherals[$0.identifier] = $0
+                    
+                    let peripheral = RestoredPeripheral($0)
+                    central.restoredPeripherals[peripheral.identifier] = peripheral
+                    
+                    if peripheral.status == .pendingDiscovery {
+                        do {
+                            try central.discoverServicesWithCharacteristics(
+                                for: peripheral.identifier,
+                                discover: .all,
+                                completion: { central, peripheral, errors in
+                                    central.restoredPeripherals[peripheral.identifier] = RestoredPeripheral(peripheral)
+                                    
+                                    if (!central.hasRestoredPeripheralsPendingDiscovery()) {
+                                        onPeripheralsRestored(central, Array(central.restoredPeripherals.values))
+                                    }
+                                }
+                            )
+                        } catch {
+                            print("Error restoring services or characteristics for peripheral. ID: \(peripheral.identifier) Error: \(error)")
+                        }
+                    }
+                }
+                
+                if (!central.hasRestoredPeripheralsPendingDiscovery()) {
+                    onPeripheralsRestored(central, Array(central.restoredPeripherals.values))
+                }
             }
         )
         self.peripheralDelegate = PeripheralDelegate(
@@ -160,7 +161,7 @@ final class Central {
         self.centralManager = CBCentralManager(
             delegate: centralManagerDelegate,
             queue: nil,
-            options: if let key = restorationKey { [CBCentralManagerOptionRestoreIdentifierKey: key] } else { nil }
+            options: restorationKey != nil ? [CBCentralManagerOptionRestoreIdentifierKey: restorationKey!] : nil
         )
     }
 
@@ -177,15 +178,6 @@ final class Central {
     func stopScan() {
         centralManager.stopScan()
         isScanning = false
-    }
-
-    func getConnectedDevices() -> [DeviceInfo] {
-        return activePeripherals.map { _, peripheral in
-            return DeviceInfo.with {
-                $0.id = peripheral.identifier.uuidString
-                $0.connectionState = encode(peripheral.state)
-            }
-        }
     }
 
     func connect(to peripheralID: PeripheralID, discover servicesWithCharacteristicsToDiscover: ServicesWithCharacteristicsToDiscover, timeout: TimeInterval?) throws {
@@ -213,7 +205,7 @@ final class Central {
                         discover: servicesWithCharacteristicsToDiscover,
                         completion: central.onServicesWithCharacteristicsInitialDiscovery
                     )
-                case .restored, .failedToConnect, .disconnected:
+                case .failedToConnect, .disconnected:
                     break
                 }
             }
@@ -421,22 +413,10 @@ final class Central {
         return characteristic
     }
 
-    func hasMissingServicesOrCharacteristics(for peripheral: CBPeripheral) -> Bool {
-        // Check if services have been discovered.
-        // If services is nil, this indicates `discoverServices` has not been run
-        guard let services = peripheral.services, !services.isEmpty else {
-            return true
-        }
-
-        // Check if characteristics have been discovered for each service
-        // If a service exists, but no characteristics exists - we still need to discover.
-        for service in services {
-            guard let characteristics = service.characteristics, !characteristics.isEmpty else {
-                return true
-            }
-        }
-
-        return false
+    func hasRestoredPeripheralsPendingDiscovery() -> Bool {
+        return restoredPeripherals.values.contains(where: { peripheral in
+            peripheral.status == .pendingDiscovery
+        })
     }
 
     public enum Failure: Error, CustomStringConvertible {

@@ -88,6 +88,13 @@ class MockReactiveBlePlatform extends _i1.Mock
       ) as _i4.Stream<_i2.ConnectionStateUpdate>);
 
   @override
+  _i4.Stream<_i2.RestoredPeripheral> get restoredDeviceStream =>
+      (super.noSuchMethod(
+        Invocation.getter(#restoredDeviceStream),
+        returnValue: _i4.Stream<_i2.RestoredPeripheral>.empty(),
+      ) as _i4.Stream<_i2.RestoredPeripheral>);
+
+  @override
   _i4.Stream<_i2.CharacteristicValue> get charValueUpdateStream =>
       (super.noSuchMethod(
         Invocation.getter(#charValueUpdateStream),
@@ -181,17 +188,6 @@ class MockReactiveBlePlatform extends _i1.Mock
         ),
         returnValue: _i4.Stream<void>.empty(),
       ) as _i4.Stream<void>);
-
-  @override
-  _i4.Future<List<_i2.ConnectionStateUpdate>> getConnectedDevices() =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #getConnectedDevices,
-          [],
-        ),
-        returnValue: _i4.Future<List<_i2.ConnectionStateUpdate>>.value(
-            <_i2.ConnectionStateUpdate>[]),
-      ) as _i4.Future<List<_i2.ConnectionStateUpdate>>);
 
   @override
   _i4.Future<void> disconnectDevice(String? deviceId) => (super.noSuchMethod(
@@ -446,6 +442,22 @@ class MockConnectedDeviceOperation extends _i1.Mock
       ) as _i4.Future<void>);
 
   @override
+  _i4.Stream<List<int>> attachToCharacteristicSubscription(
+    _i2.CharacteristicInstance? characteristic,
+    _i4.Future<void>? isDisconnected,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #attachToCharacteristicSubscription,
+          [
+            characteristic,
+            isDisconnected,
+          ],
+        ),
+        returnValue: _i4.Stream<List<int>>.empty(),
+      ) as _i4.Stream<List<int>>);
+
+  @override
   _i4.Stream<List<int>> subscribeToCharacteristic(
     _i2.CharacteristicInstance? characteristic,
     _i4.Future<void>? isDisconnected,
@@ -573,6 +585,18 @@ class MockDeviceConnector extends _i1.Mock implements _i6.DeviceConnector {
                 servicesWithCharacteristicsToDiscover,
             #connectionTimeout: connectionTimeout,
           },
+        ),
+        returnValue: _i4.Stream<_i2.ConnectionStateUpdate>.empty(),
+      ) as _i4.Stream<_i2.ConnectionStateUpdate>);
+
+  @override
+  _i4.Stream<_i2.ConnectionStateUpdate> attachToConnectedDevice(
+          {required String? id}) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #attachToConnectedDevice,
+          [],
+          {#id: id},
         ),
         returnValue: _i4.Stream<_i2.ConnectionStateUpdate>.empty(),
       ) as _i4.Stream<_i2.ConnectionStateUpdate>);

@@ -16,6 +16,8 @@ public class SwiftReactiveBlePlugin: NSObject, FlutterPlugin {
             .setStreamHandler(plugin.connectedDeviceStreamHandler)
         FlutterEventChannel(name: "flutter_reactive_ble_char_update", binaryMessenger: registrar.messenger())
             .setStreamHandler(plugin.characteristicValueUpdateStreamHandler)
+        FlutterEventChannel(name: "flutter_reactive_ble_restored_device", binaryMessenger: registrar.messenger())
+            .setStreamHandler(plugin.restoredDeviceStreamHandler)
     }
 
     var statusStreamHandler: StreamHandler<PluginController> {
@@ -60,6 +62,31 @@ public class SwiftReactiveBlePlugin: NSObject, FlutterPlugin {
             }
         )
     }
+    
+    var restoredDeviceStreamHandler: StreamHandler<PluginController> {
+        return StreamHandler(
+            name: "restored device stream handler",
+            context: context,
+            onListen: { context, sink in
+                context.restoredDeviceSink = sink
+                var messages = [RestoredDeviceInfo]()
+                context.restoredDeviceQueue.forEach { msg in
+                    messages.append(msg)
+                }
+                context.restoredDeviceQueue.removeAll()
+                let message = RestoredDeviceInfoCollection.with {
+                    $0.devices = messages
+                }
+                sink.add(.success(message))
+                return nil
+            },
+            onCancel: { context in
+                context.restoredDeviceQueue.removeAll()
+                context.restoredDeviceSink = nil
+                return nil
+            }
+        )
+    }
 
     var characteristicValueUpdateStreamHandler: StreamHandler<PluginController> {
         return StreamHandler(
@@ -95,9 +122,6 @@ public class SwiftReactiveBlePlugin: NSObject, FlutterPlugin {
         }),
         AnyPlatformMethod(UnaryPlatformMethod(name: "connectToDevice") { (name, context, args: ConnectToDeviceRequest, completion) in
             context.connectToDevice(name: name, args: args, completion: completion)
-        }),
-        AnyPlatformMethod(NullaryPlatformMethod(name: "getConnectedDevices") { name, context, completion in
-            context.getConnectedDevices(name: name, completion: completion)
         }),
         AnyPlatformMethod(UnaryPlatformMethod(name: "disconnectFromDevice") { (name, context, args: ConnectToDeviceRequest, completion) in
             context.disconnectFromDevice(name: name, args: args, completion: completion)

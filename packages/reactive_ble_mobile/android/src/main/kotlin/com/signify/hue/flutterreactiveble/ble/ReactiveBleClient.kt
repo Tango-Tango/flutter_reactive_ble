@@ -134,11 +134,6 @@ open class ReactiveBleClient(private val context: Context) : BleClient {
         )
     }
 
-    override fun getConnectedDevices(): List<ConnectionUpdateSuccess> {
-        return activeConnections.keys.toList()
-            .map { ConnectionUpdateSuccess(it, ConnectionState.CONNECTED.code) }
-    }
-
     override fun disconnectDevice(deviceId: String) {
         activeConnections[deviceId]?.disconnectDevice(deviceId)
         activeConnections.remove(deviceId)

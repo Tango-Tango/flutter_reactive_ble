@@ -2,7 +2,6 @@ import CoreBluetooth
 
 enum ConnectionChange {
     case connected
-    case restored
     case failedToConnect(Error?)
     case disconnected(Error?)
 }
@@ -12,19 +11,23 @@ final class CentralManagerDelegate: NSObject, CBCentralManagerDelegate {
     typealias StateChangeHandler = (CBManagerState) -> Void
     typealias DiscoveryHandler = (CBPeripheral, AdvertisementData, RSSI) -> Void
     typealias ConnectionChangeHandler = (CBPeripheral, ConnectionChange) -> Void
+    typealias PeripheralsRestoredHandler = ([CBPeripheral]) -> Void
 
     private let onStateChange: StateChangeHandler
     private let onDiscovery: DiscoveryHandler
     private let onConnectionChange: ConnectionChangeHandler
+    private let onPeripheralsRestored: PeripheralsRestoredHandler
 
     init(
         onStateChange: @escaping StateChangeHandler,
         onDiscovery: @escaping DiscoveryHandler,
-        onConnectionChange: @escaping ConnectionChangeHandler
+        onConnectionChange: @escaping ConnectionChangeHandler,
+        onPeripheralsRestored: @escaping PeripheralsRestoredHandler
     ) {
         self.onStateChange = onStateChange
         self.onDiscovery = onDiscovery
         self.onConnectionChange = onConnectionChange
+        self.onPeripheralsRestored = onPeripheralsRestored
     }
 
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
@@ -49,9 +52,7 @@ final class CentralManagerDelegate: NSObject, CBCentralManagerDelegate {
 
     func centralManager(_ central: CBCentralManager, willRestoreState dict: [String: Any]) {
         if let peripherals = dict[CBCentralManagerRestoredStatePeripheralsKey] as? [CBPeripheral] {
-            peripherals.forEach { (peripheral) in
-                onConnectionChange(peripheral, .restored)   
-            }
+            onPeripheralsRestored(peripherals)
         }
     }
 }

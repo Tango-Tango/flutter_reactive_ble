@@ -38,7 +38,6 @@ class PluginController {
             "negotiateMtuSize" to this::negotiateMtuSize,
             "requestConnectionPriority" to this::requestConnectionPriority,
             "discoverServices" to this::discoverServices,
-            "getConnectedDevices" to this::getConnectedDevices,
             "getDiscoveredServices" to this::discoverServices,
             "readRssi" to this::readRssi,
         )
@@ -388,12 +387,5 @@ class PluginController {
                 result.error("read_rssi_error", error.message, null)
             })
             .discard()
-    }
-
-    private fun getConnectedDevices(call: MethodCall, result: Result) {
-        val devices = bleClient.getConnectedDevices().map{ protoConverter.convertToDeviceInfo(it) }
-        val message = pb.DeviceInfoCollection.newBuilder()
-        devices.forEach { device -> message.addDevices(device)}
-        result.success(message.build().toByteArray())
     }
 }

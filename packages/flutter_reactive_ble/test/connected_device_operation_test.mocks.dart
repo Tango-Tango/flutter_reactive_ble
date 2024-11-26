@@ -85,6 +85,13 @@ class MockReactiveBlePlatform extends _i1.Mock
       ) as _i4.Stream<_i2.ConnectionStateUpdate>);
 
   @override
+  _i4.Stream<_i2.RestoredPeripheral> get restoredDeviceStream =>
+      (super.noSuchMethod(
+        Invocation.getter(#restoredDeviceStream),
+        returnValue: _i4.Stream<_i2.RestoredPeripheral>.empty(),
+      ) as _i4.Stream<_i2.RestoredPeripheral>);
+
+  @override
   _i4.Stream<_i2.CharacteristicValue> get charValueUpdateStream =>
       (super.noSuchMethod(
         Invocation.getter(#charValueUpdateStream),
@@ -178,17 +185,6 @@ class MockReactiveBlePlatform extends _i1.Mock
         ),
         returnValue: _i4.Stream<void>.empty(),
       ) as _i4.Stream<void>);
-
-  @override
-  _i4.Future<List<_i2.ConnectionStateUpdate>> getConnectedDevices() =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #getConnectedDevices,
-          [],
-        ),
-        returnValue: _i4.Future<List<_i2.ConnectionStateUpdate>>.value(
-            <_i2.ConnectionStateUpdate>[]),
-      ) as _i4.Future<List<_i2.ConnectionStateUpdate>>);
 
   @override
   _i4.Future<void> disconnectDevice(String? deviceId) => (super.noSuchMethod(

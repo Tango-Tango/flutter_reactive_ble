@@ -80,6 +80,25 @@ class FlutterReactiveBle {
     yield* _connectedDeviceOperator.characteristicValueStream;
   }
 
+  /// A stream providing devices restored from a previous instance.
+  Stream<RestoredDevice> get restoredDeviceStream =>
+      Repeater.broadcast(onListenEmitFrom: () async* {
+        await initialize();
+        yield* _blePlatform.restoredDeviceStream.asyncMap(
+          (peripheral) async => RestoredDevice(
+            id: peripheral.id,
+            name: peripheral.name,
+            characteristicStreams: {
+              for (final char in peripheral.subscriptions)
+                char: (await resolveSingle(char)).attachToSubscription()
+            },
+            connectionStream: _deviceConnector.attachToConnectedDevice(
+              id: peripheral.id,
+            ),
+          ),
+        );
+      }).stream;
+
   late ReactiveBlePlatform _blePlatform;
 
   BleStatus _status = BleStatus.unknown;
@@ -315,13 +334,6 @@ class FlutterReactiveBle {
               connectionTimeout: connectionTimeout,
             ),
           );
-
-  /// Gets a list of connection states for connected devices
-  /// Useful when restoring devices via iOS state restoration
-  Future<List<ConnectionStateUpdate>> getConnectedDevices() async {
-    await initialize();
-    return _blePlatform.getConnectedDevices();
-  }
 
   /// Disconnects a device with the provided id.
   ///
@@ -610,6 +622,35 @@ class Characteristic {
 
     return _lib.initialize().asStream().asyncExpand(
           (_) => _lib._connectedDeviceOperator.subscribeToCharacteristic(
+            CharacteristicInstance(
+              characteristicId: id,
+              characteristicInstanceId: _instanceId,
+              serviceId: service.id,
+              serviceInstanceId: service._instanceId,
+              deviceId: service.deviceId,
+            ),
+            isDisconnected,
+          ),
+        );
+  }
+
+  /// Subscribes to updates from the characteristic specified.
+  ///
+  /// This stream terminates automatically when the device is disconnected.
+  Stream<List<int>> attachToSubscription() {
+    _assertValidity();
+
+    final isDisconnected = _lib.connectedDeviceStream
+        .where((update) =>
+            update.deviceId == service.deviceId &&
+            (update.connectionState == DeviceConnectionState.disconnecting ||
+                update.connectionState == DeviceConnectionState.disconnected))
+        .cast<void>()
+        .firstWhere((_) => true, orElse: () {});
+
+    return _lib.initialize().asStream().asyncExpand(
+          (_) =>
+              _lib._connectedDeviceOperator.attachToCharacteristicSubscription(
             CharacteristicInstance(
               characteristicId: id,
               characteristicInstanceId: _instanceId,

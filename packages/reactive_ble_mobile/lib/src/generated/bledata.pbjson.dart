@@ -100,6 +100,35 @@ final $typed_data.Uint8List deviceInfoDescriptor = $convert.base64Decode(
     'Nvbm5lY3Rpb25TdGF0ZRIpCgdmYWlsdXJlGAMgASgLMg8uR2VuZXJpY0ZhaWx1cmVSB2ZhaWx1'
     'cmU=');
 
+@$core.Deprecated('Use restoredDeviceInfoDescriptor instead')
+const RestoredDeviceInfo$json = {
+  '1': 'RestoredDeviceInfo',
+  '2': [
+    {'1': 'id', '3': 1, '4': 1, '5': 9, '10': 'id'},
+    {'1': 'name', '3': 2, '4': 1, '5': 9, '10': 'name'},
+    {'1': 'subscriptions', '3': 3, '4': 3, '5': 11, '6': '.CharacteristicAddress', '10': 'subscriptions'},
+  ],
+};
+
+/// Descriptor for `RestoredDeviceInfo`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List restoredDeviceInfoDescriptor = $convert.base64Decode(
+    'ChJSZXN0b3JlZERldmljZUluZm8SDgoCaWQYASABKAlSAmlkEhIKBG5hbWUYAiABKAlSBG5hbW'
+    'USPAoNc3Vic2NyaXB0aW9ucxgDIAMoCzIWLkNoYXJhY3RlcmlzdGljQWRkcmVzc1INc3Vic2Ny'
+    'aXB0aW9ucw==');
+
+@$core.Deprecated('Use restoredDeviceInfoCollectionDescriptor instead')
+const RestoredDeviceInfoCollection$json = {
+  '1': 'RestoredDeviceInfoCollection',
+  '2': [
+    {'1': 'devices', '3': 1, '4': 3, '5': 11, '6': '.RestoredDeviceInfo', '10': 'devices'},
+  ],
+};
+
+/// Descriptor for `RestoredDeviceInfoCollection`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List restoredDeviceInfoCollectionDescriptor = $convert.base64Decode(
+    'ChxSZXN0b3JlZERldmljZUluZm9Db2xsZWN0aW9uEi0KB2RldmljZXMYASADKAsyEy5SZXN0b3'
+    'JlZERldmljZUluZm9SB2RldmljZXM=');
+
 @$core.Deprecated('Use disconnectFromDeviceRequestDescriptor instead')
 const DisconnectFromDeviceRequest$json = {
   '1': 'DisconnectFromDeviceRequest',

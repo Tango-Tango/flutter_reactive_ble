@@ -10,6 +10,7 @@ class ReactiveBleMobilePlatform extends ReactiveBlePlatform {
     required ProtobufConverter protobufConverter,
     required MethodChannel bleMethodChannel,
     required Stream<List<int>> connectedDeviceChannel,
+    required Stream<List<int>> restoredDeviceChannel,
     required Stream<List<int>> charUpdateChannel,
     required Stream<List<int>> bleDeviceScanChannel,
     required Stream<List<int>> bleStatusChannel,
@@ -19,6 +20,7 @@ class ReactiveBleMobilePlatform extends ReactiveBlePlatform {
         _protobufConverter = protobufConverter,
         _bleMethodChannel = bleMethodChannel,
         _connectedDeviceRawStream = connectedDeviceChannel,
+        _restoredDeviceRawStream = restoredDeviceChannel,
         _charUpdateRawStream = charUpdateChannel,
         _bleStatusRawChannel = bleStatusChannel,
         _bleDeviceScanRawStream = bleDeviceScanChannel,
@@ -29,6 +31,7 @@ class ReactiveBleMobilePlatform extends ReactiveBlePlatform {
   final ProtobufConverter _protobufConverter;
   final MethodChannel _bleMethodChannel;
   final Stream<List<int>> _connectedDeviceRawStream;
+  final Stream<List<int>> _restoredDeviceRawStream;
   final Stream<List<int>> _charUpdateRawStream;
   final Stream<List<int>> _bleDeviceScanRawStream;
   final Stream<List<int>> _bleStatusRawChannel;
@@ -52,6 +55,16 @@ class ReactiveBleMobilePlatform extends ReactiveBlePlatform {
           return update;
         },
       );
+
+  @override
+  Stream<RestoredPeripheral> get restoredDeviceStream =>
+      _restoredDeviceRawStream
+          .map(_protobufConverter.restoredDevicesFrom)
+          .take(1)
+          .expand((devices) {
+        _logger?.log('Received $devices');
+        return devices;
+      });
 
   @override
   Stream<CharacteristicValue> get charValueUpdateStream =>
@@ -146,18 +159,6 @@ class ReactiveBleMobilePlatform extends ReactiveBlePlatform {
               .writeToBuffer(),
         )
         .asStream();
-  }
-
-  @override
-  Future<List<ConnectionStateUpdate>> getConnectedDevices() {
-    _logger?.log(
-      'Get connected devices',
-    );
-    return _bleMethodChannel
-        .invokeMethod<List<int>>(
-          "getConnectedDevices",
-        )
-        .then((data) => _protobufConverter.connectedDevicesFrom(data!));
   }
 
   @override
@@ -341,6 +342,8 @@ class ReactiveBleMobilePlatformFactory {
 
     const connectedDeviceChannel =
         EventChannel("flutter_reactive_ble_connected_device");
+    const restoredDeviceChannel =
+        EventChannel("flutter_reactive_ble_restored_device");
     const charEventChannel = EventChannel("flutter_reactive_ble_char_update");
     const scanEventChannel = EventChannel("flutter_reactive_ble_scan");
     const bleStatusChannel = EventChannel("flutter_reactive_ble_status");
@@ -351,6 +354,8 @@ class ReactiveBleMobilePlatformFactory {
       bleMethodChannel: _bleMethodChannel,
       connectedDeviceChannel:
           connectedDeviceChannel.receiveBroadcastStream().cast<List<int>>(),
+      restoredDeviceChannel:
+          restoredDeviceChannel.receiveBroadcastStream().cast<List<int>>(),
       charUpdateChannel:
           charEventChannel.receiveBroadcastStream().cast<List<int>>(),
       bleDeviceScanChannel:
