@@ -6,6 +6,7 @@ import com.signify.hue.flutterreactiveble.channelhandlers.BleStatusHandler
 import com.signify.hue.flutterreactiveble.channelhandlers.CharNotificationHandler
 import com.signify.hue.flutterreactiveble.channelhandlers.DeviceConnectionHandler
 import com.signify.hue.flutterreactiveble.channelhandlers.ScanDevicesHandler
+import com.signify.hue.flutterreactiveble.channelhandlers.RestoredDeviceHandler
 import com.signify.hue.flutterreactiveble.converters.ProtobufMessageConverter
 import com.signify.hue.flutterreactiveble.converters.UuidConverter
 import com.signify.hue.flutterreactiveble.model.ClearGattCacheErrorType
@@ -65,16 +66,19 @@ class PluginController {
         deviceConnectionChannel = EventChannel(messenger, "flutter_reactive_ble_connected_device")
         charNotificationChannel = EventChannel(messenger, "flutter_reactive_ble_char_update")
         val bleStatusChannel = EventChannel(messenger, "flutter_reactive_ble_status")
+        val restoredDeviceChannel = EventChannel(messenger, "flutter_reactive_ble_restored_device")
 
         scanDevicesHandler = ScanDevicesHandler(bleClient)
         deviceConnectionHandler = DeviceConnectionHandler(bleClient)
         charNotificationHandler = CharNotificationHandler(bleClient)
         val bleStatusHandler = BleStatusHandler(bleClient)
+        val restoredDeviceHandler = RestoredDeviceHandler()
 
         scanchannel.setStreamHandler(scanDevicesHandler)
         deviceConnectionChannel.setStreamHandler(deviceConnectionHandler)
         charNotificationChannel.setStreamHandler(charNotificationHandler)
         bleStatusChannel.setStreamHandler(bleStatusHandler)
+        restoredDeviceChannel.setStreamHandler(restoredDeviceHandler)
     }
 
     internal fun deinitialize() {
