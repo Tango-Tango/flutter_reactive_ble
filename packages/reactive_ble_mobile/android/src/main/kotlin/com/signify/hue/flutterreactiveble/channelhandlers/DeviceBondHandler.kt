@@ -18,6 +18,7 @@ class DeviceBondHandler(private val bleClient: com.signify.hue.flutterreactivebl
         eventSink?.let {
             sink = eventSink
             disposable = bleClient.bondUpdateSubject
+                .distinct()
                 .observeOn(AndroidSchedulers.mainThread())
                 .map(converter::convertToBondInfo)
                 .map { it.toByteArray() }
