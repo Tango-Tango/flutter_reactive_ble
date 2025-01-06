@@ -429,7 +429,6 @@ open class ReactiveBleClient(private val context: Context) : BleClient {
 
         when (update) {
             is ConnectionUpdateSuccess -> {
-                Log.w("BondStateDebug", "Connection updated for ${update.deviceId}: $update.d")
                 val device = rxBleClient.getBleDevice(update.deviceId)
                 bondUpdateBehaviorSubject.onNext(
                     BondUpdate(update.deviceId, device.getBondState().code)
@@ -450,12 +449,9 @@ open class ReactiveBleClient(private val context: Context) : BleClient {
             val state = intent.getIntExtra(BluetoothDevice.EXTRA_BOND_STATE, BluetoothDevice.ERROR)
 
             if (device != null && state != BluetoothDevice.ERROR) {
-                Log.w("BondStateDebug", "Bond update intent received for $[${device.address}]: $state")
                 bondUpdateBehaviorSubject.onNext(
                     BondUpdate(device.address, BondState.fromRaw(state).code)
                 )
-            } else {
-                Log.w("BondStateDebug", "Bond update intent received but device is $device and state is $state")
             }
         }
     }
