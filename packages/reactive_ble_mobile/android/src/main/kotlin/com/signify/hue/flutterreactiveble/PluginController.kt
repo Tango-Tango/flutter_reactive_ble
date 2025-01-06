@@ -1,9 +1,12 @@
 package com.signify.hue.flutterreactiveble
 
 import android.content.Context
+import android.util.Log
+import com.signify.hue.flutterreactiveble.ble.ConnectionUpdateSuccess
 import com.signify.hue.flutterreactiveble.ble.RequestConnectionPriorityFailed
 import com.signify.hue.flutterreactiveble.channelhandlers.BleStatusHandler
 import com.signify.hue.flutterreactiveble.channelhandlers.CharNotificationHandler
+import com.signify.hue.flutterreactiveble.channelhandlers.DeviceBondHandler
 import com.signify.hue.flutterreactiveble.channelhandlers.DeviceConnectionHandler
 import com.signify.hue.flutterreactiveble.channelhandlers.ScanDevicesHandler
 import com.signify.hue.flutterreactiveble.channelhandlers.RestoredDeviceHandler
@@ -66,18 +69,21 @@ class PluginController {
         deviceConnectionChannel = EventChannel(messenger, "flutter_reactive_ble_connected_device")
         charNotificationChannel = EventChannel(messenger, "flutter_reactive_ble_char_update")
         val bleStatusChannel = EventChannel(messenger, "flutter_reactive_ble_status")
+        val bondUpdateChannel = EventChannel(messenger, "flutter_reactive_ble_bond_update")
         val restoredDeviceChannel = EventChannel(messenger, "flutter_reactive_ble_restored_device")
 
         scanDevicesHandler = ScanDevicesHandler(bleClient)
         deviceConnectionHandler = DeviceConnectionHandler(bleClient)
         charNotificationHandler = CharNotificationHandler(bleClient)
         val bleStatusHandler = BleStatusHandler(bleClient)
+        val bondUpdateHandler = DeviceBondHandler(bleClient)
         val restoredDeviceHandler = RestoredDeviceHandler()
 
         scanchannel.setStreamHandler(scanDevicesHandler)
         deviceConnectionChannel.setStreamHandler(deviceConnectionHandler)
         charNotificationChannel.setStreamHandler(charNotificationHandler)
         bleStatusChannel.setStreamHandler(bleStatusHandler)
+        bondUpdateChannel.setStreamHandler(bondUpdateHandler)
         restoredDeviceChannel.setStreamHandler(restoredDeviceHandler)
     }
 

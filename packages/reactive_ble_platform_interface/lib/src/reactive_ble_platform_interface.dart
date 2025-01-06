@@ -24,6 +24,14 @@ abstract class ReactiveBlePlatform extends PlatformInterface {
     _instance = instance;
   }
 
+  /// Stream that provides status updates regarding device bonding.
+  ///
+  /// It is important to subscribe to this stream before connecting to a device
+  /// since it can happen that some results are missed.
+  Stream<BondStateUpdate> get bondUpdateStream {
+    throw UnimplementedError('scanStream has not been implemented.');
+  }
+
   /// Stream providing ble scan results.
   ///
   /// It is important to subscribe to this stream before scanning for devices

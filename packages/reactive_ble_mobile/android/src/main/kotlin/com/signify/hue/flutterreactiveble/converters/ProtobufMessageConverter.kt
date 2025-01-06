@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothGattCharacteristic
 import android.bluetooth.BluetoothGattService
 import com.google.protobuf.ByteString
 import com.polidea.rxandroidble2.RxBleDeviceServices
+import com.signify.hue.flutterreactiveble.ble.BondUpdate
 import com.signify.hue.flutterreactiveble.ble.ConnectionUpdateSuccess
 import com.signify.hue.flutterreactiveble.ble.MtuNegotiateFailed
 import com.signify.hue.flutterreactiveble.ble.MtuNegotiateResult
@@ -53,6 +54,12 @@ class ProtobufMessageConverter {
                     .setMessage(errorMessage ?: "")
                     .build(),
             )
+            .build()
+
+    fun convertToBondInfo(update: BondUpdate): pb.BondInfo =
+        pb.BondInfo.newBuilder()
+            .setId(update.deviceId)
+            .setBondState(update.bondState)
             .build()
 
     fun convertToDeviceInfo(connection: ConnectionUpdateSuccess): pb.DeviceInfo =

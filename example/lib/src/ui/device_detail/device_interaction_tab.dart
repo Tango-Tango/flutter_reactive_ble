@@ -20,14 +20,19 @@ class DeviceInteractionTab extends StatelessWidget {
   final DiscoveredDevice device;
 
   @override
-  Widget build(BuildContext context) => Consumer3<BleDeviceConnector, ConnectionStateUpdate, BleDeviceInteractor>(
-        builder: (_, deviceConnector, connectionStateUpdate, serviceDiscoverer, __) => _DeviceInteractionTab(
+  Widget build(BuildContext context) => Consumer4<BleDeviceConnector,
+          DeviceBondState, ConnectionStateUpdate, BleDeviceInteractor>(
+        builder: (_, deviceConnector, bondState, connectionStateUpdate,
+                serviceDiscoverer, __) =>
+            _DeviceInteractionTab(
           viewModel: DeviceInteractionViewModel(
             deviceId: device.id,
+            bondState: bondState,
             connectableStatus: device.connectable,
             connectionStatus: connectionStateUpdate.connectionState,
             deviceConnector: deviceConnector,
-            discoverServices: () => serviceDiscoverer.discoverServices(device.id),
+            discoverServices: () =>
+                serviceDiscoverer.discoverServices(device.id),
             readRssi: () => serviceDiscoverer.readRssi(device.id),
           ),
         ),
@@ -40,6 +45,7 @@ class DeviceInteractionViewModel extends $DeviceInteractionViewModel {
   const DeviceInteractionViewModel({
     required this.deviceId,
     required this.connectableStatus,
+    required this.bondState,
     required this.connectionStatus,
     required this.deviceConnector,
     required this.discoverServices,
@@ -48,6 +54,7 @@ class DeviceInteractionViewModel extends $DeviceInteractionViewModel {
 
   final String deviceId;
   final Connectable connectableStatus;
+  final DeviceBondState bondState;
   final DeviceConnectionState connectionStatus;
   final BleDeviceConnector deviceConnector;
   final Future<int> Function() readRssi;
@@ -55,7 +62,8 @@ class DeviceInteractionViewModel extends $DeviceInteractionViewModel {
   @CustomEquality(Ignore())
   final Future<List<Service>> Function() discoverServices;
 
-  bool get deviceConnected => connectionStatus == DeviceConnectionState.connected;
+  bool get deviceConnected =>
+      connectionStatus == DeviceConnectionState.connected;
 
   void connect() {
     deviceConnector.connect(deviceId);
@@ -110,7 +118,8 @@ class _DeviceInteractionTabState extends State<_DeviceInteractionTab> {
             delegate: SliverChildListDelegate.fixed(
               [
                 Padding(
-                  padding: const EdgeInsetsDirectional.only(top: 8.0, bottom: 16.0, start: 16.0),
+                  padding: const EdgeInsetsDirectional.only(
+                      top: 8.0, bottom: 16.0, start: 16.0),
                   child: Text(
                     "ID: ${widget.viewModel.deviceId}",
                     style: const TextStyle(fontWeight: FontWeight.bold),
@@ -138,26 +147,38 @@ class _DeviceInteractionTabState extends State<_DeviceInteractionTab> {
                   ),
                 ),
                 Padding(
+                  padding: const EdgeInsetsDirectional.only(start: 16.0),
+                  child: Text(
+                    "Bond status: ${widget.viewModel.bondState}",
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+                Padding(
                   padding: const EdgeInsets.only(top: 16.0),
                   child: Wrap(
                     alignment: WrapAlignment.spaceEvenly,
                     children: <Widget>[
                       ElevatedButton(
-                        onPressed: !widget.viewModel.deviceConnected ? widget.viewModel.connect : null,
+                        onPressed: !widget.viewModel.deviceConnected
+                            ? widget.viewModel.connect
+                            : null,
                         child: const Text("Connect"),
                       ),
                       ElevatedButton(
-                        onPressed: widget.viewModel.deviceConnected ? widget.viewModel.disconnect : null,
+                        onPressed: widget.viewModel.deviceConnected
+                            ? widget.viewModel.disconnect
+                            : null,
                         child: const Text("Disconnect"),
                       ),
                       ElevatedButton(
-                        onPressed: widget.viewModel.deviceConnected ? discoverServices : null,
+                        onPressed: widget.viewModel.deviceConnected
+                            ? discoverServices
+                            : null,
                         child: const Text("Discover Services"),
                       ),
                       ElevatedButton(
-                        onPressed: widget.viewModel.deviceConnected
-                            ? readRssi
-                            : null,
+                        onPressed:
+                            widget.viewModel.deviceConnected ? readRssi : null,
                         child: const Text("Get RSSI"),
                       ),
                     ],
@@ -222,7 +243,8 @@ class _ServiceDiscoveryListState extends State<_ServiceDiscoveryList> {
   Widget _characteristicTile(Characteristic characteristic) => ListTile(
         onTap: () => showDialog<void>(
           context: context,
-          builder: (context) => CharacteristicInteractionDialog(characteristic: characteristic),
+          builder: (context) =>
+              CharacteristicInteractionDialog(characteristic: characteristic),
         ),
         title: Text(
           '${characteristic.id}\n(${_characteristicSummary(characteristic)})',
@@ -253,7 +275,9 @@ class _ServiceDiscoveryListState extends State<_ServiceDiscoveryList> {
                   ),
                   Column(
                     mainAxisSize: MainAxisSize.min,
-                    children: service.characteristics.map(_characteristicTile).toList(),
+                    children: service.characteristics
+                        .map(_characteristicTile)
+                        .toList(),
                   ),
                 ],
               ),

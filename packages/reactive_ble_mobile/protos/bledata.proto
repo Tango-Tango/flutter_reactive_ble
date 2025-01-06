@@ -29,6 +29,11 @@ message ConnectToDeviceRequest {
     int32 timeoutInMs = 3;
 }
 
+message BondInfo {
+    string id = 1;
+    int32 bondState = 2;
+}
+
 message DeviceInfo {
     string id = 1;
     int32 connectionState = 2;

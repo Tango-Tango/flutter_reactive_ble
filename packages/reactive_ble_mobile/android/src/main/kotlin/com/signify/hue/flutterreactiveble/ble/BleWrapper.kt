@@ -41,6 +41,8 @@ data class ScanInfo(
     }
 }
 
+data class BondUpdate(val deviceId: String, val bondState: Int)
+
 sealed class ConnectionUpdate
 
 data class ConnectionUpdateSuccess(val deviceId: String, val connectionState: Int) : ConnectionUpdate()

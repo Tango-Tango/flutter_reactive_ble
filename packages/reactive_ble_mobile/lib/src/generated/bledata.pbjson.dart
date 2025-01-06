@@ -84,6 +84,20 @@ final $typed_data.Uint8List connectToDeviceRequestDescriptor = $convert.base64De
     'aXRoQ2hhcmFjdGVyaXN0aWNzUiVzZXJ2aWNlc1dpdGhDaGFyYWN0ZXJpc3RpY3NUb0Rpc2Nvdm'
     'VyEiAKC3RpbWVvdXRJbk1zGAMgASgFUgt0aW1lb3V0SW5Ncw==');
 
+@$core.Deprecated('Use bondInfoDescriptor instead')
+const BondInfo$json = {
+  '1': 'BondInfo',
+  '2': [
+    {'1': 'id', '3': 1, '4': 1, '5': 9, '10': 'id'},
+    {'1': 'bondState', '3': 2, '4': 1, '5': 5, '10': 'bondState'},
+  ],
+};
+
+/// Descriptor for `BondInfo`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List bondInfoDescriptor = $convert.base64Decode(
+    'CghCb25kSW5mbxIOCgJpZBgBIAEoCVICaWQSHAoJYm9uZFN0YXRlGAIgASgFUglib25kU3RhdG'
+    'U=');
+
 @$core.Deprecated('Use deviceInfoDescriptor instead')
 const DeviceInfo$json = {
   '1': 'DeviceInfo',

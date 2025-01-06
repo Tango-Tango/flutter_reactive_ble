@@ -78,6 +78,12 @@ class MockReactiveBlePlatform extends _i1.Mock
   }
 
   @override
+  _i4.Stream<_i2.BondStateUpdate> get bondUpdateStream => (super.noSuchMethod(
+        Invocation.getter(#bondUpdateStream),
+        returnValue: _i4.Stream<_i2.BondStateUpdate>.empty(),
+      ) as _i4.Stream<_i2.BondStateUpdate>);
+
+  @override
   _i4.Stream<_i2.ScanResult> get scanStream => (super.noSuchMethod(
         Invocation.getter(#scanStream),
         returnValue: _i4.Stream<_i2.ScanResult>.empty(),

@@ -355,6 +355,70 @@ class ConnectToDeviceRequest extends $pb.GeneratedMessage {
   void clearTimeoutInMs() => clearField(3);
 }
 
+class BondInfo extends $pb.GeneratedMessage {
+  factory BondInfo({
+    $core.String? id,
+    $core.int? bondState,
+  }) {
+    final $result = create();
+    if (id != null) {
+      $result.id = id;
+    }
+    if (bondState != null) {
+      $result.bondState = bondState;
+    }
+    return $result;
+  }
+  BondInfo._() : super();
+  factory BondInfo.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory BondInfo.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'BondInfo', createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'id')
+    ..a<$core.int>(2, _omitFieldNames ? '' : 'bondState', $pb.PbFieldType.O3, protoName: 'bondState')
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  BondInfo clone() => BondInfo()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  BondInfo copyWith(void Function(BondInfo) updates) => super.copyWith((message) => updates(message as BondInfo)) as BondInfo;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static BondInfo create() => BondInfo._();
+  BondInfo createEmptyInstance() => create();
+  static $pb.PbList<BondInfo> createRepeated() => $pb.PbList<BondInfo>();
+  @$core.pragma('dart2js:noInline')
+  static BondInfo getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<BondInfo>(create);
+  static BondInfo? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get id => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set id($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasId() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearId() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.int get bondState => $_getIZ(1);
+  @$pb.TagNumber(2)
+  set bondState($core.int v) { $_setSignedInt32(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasBondState() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearBondState() => clearField(2);
+}
+
 class DeviceInfo extends $pb.GeneratedMessage {
   factory DeviceInfo({
     $core.String? id,
