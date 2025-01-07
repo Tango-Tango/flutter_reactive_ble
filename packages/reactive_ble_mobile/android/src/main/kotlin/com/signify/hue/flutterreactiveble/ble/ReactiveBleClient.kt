@@ -424,8 +424,6 @@ open class ReactiveBleClient(private val context: Context) : BleClient {
             )
 
     private fun onConnectionUpdate(update: ConnectionUpdate) {
-        connectionUpdateBehaviorSubject.onNext(update)
-
         when (update) {
             is ConnectionUpdateSuccess -> {
                 val device = rxBleClient.getBleDevice(update.deviceId)
@@ -440,6 +438,9 @@ open class ReactiveBleClient(private val context: Context) : BleClient {
                 )
             }
         }
+
+        connectionUpdateBehaviorSubject.onNext(update)
+
     }
 
     private val bondStateReceiver = object : BroadcastReceiver() {
