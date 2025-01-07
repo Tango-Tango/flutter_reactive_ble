@@ -9,11 +9,11 @@ part 'bond_state_update.g.dart';
 @FunctionalData()
 class BondStateUpdate extends $BondStateUpdate {
   final String deviceId;
-  final DeviceBondState connectionState;
+  final DeviceBondState bondState;
 
   const BondStateUpdate({
     required this.deviceId,
-    required this.connectionState,
+    required this.bondState,
   });
 }
 

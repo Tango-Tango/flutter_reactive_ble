@@ -628,12 +628,12 @@ void main() {
     group('bond status', () {
       const status1 = BondStateUpdate(
         deviceId: '123',
-        connectionState: DeviceBondState.unknown,
+        bondState: DeviceBondState.unknown,
       );
 
       const status2 = BondStateUpdate(
         deviceId: '123',
-        connectionState: DeviceBondState.bonding,
+        bondState: DeviceBondState.bonding,
       );
 
       Stream<BondStateUpdate>? _bondUpdateStream;

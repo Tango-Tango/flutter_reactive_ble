@@ -10,33 +10,33 @@ abstract class $BondStateUpdate {
   const $BondStateUpdate();
 
   String get deviceId;
-  DeviceBondState get connectionState;
+  DeviceBondState get bondState;
 
   BondStateUpdate copyWith({
     String? deviceId,
-    DeviceBondState? connectionState,
+    DeviceBondState? bondState,
   }) =>
       BondStateUpdate(
         deviceId: deviceId ?? this.deviceId,
-        connectionState: connectionState ?? this.connectionState,
+        bondState: bondState ?? this.bondState,
       );
 
   BondStateUpdate copyUsing(
       void Function(BondStateUpdate$Change change) mutator) {
     final change = BondStateUpdate$Change._(
       this.deviceId,
-      this.connectionState,
+      this.bondState,
     );
     mutator(change);
     return BondStateUpdate(
       deviceId: change.deviceId,
-      connectionState: change.connectionState,
+      bondState: change.bondState,
     );
   }
 
   @override
   String toString() =>
-      "BondStateUpdate(deviceId: $deviceId, connectionState: $connectionState)";
+      "BondStateUpdate(deviceId: $deviceId, bondState: $bondState)";
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
@@ -44,14 +44,14 @@ abstract class $BondStateUpdate {
       other is BondStateUpdate &&
       other.runtimeType == runtimeType &&
       deviceId == other.deviceId &&
-      connectionState == other.connectionState;
+      bondState == other.bondState;
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   int get hashCode {
     var result = 17;
     result = 37 * result + deviceId.hashCode;
-    result = 37 * result + connectionState.hashCode;
+    result = 37 * result + bondState.hashCode;
     return result;
   }
 }
@@ -59,11 +59,11 @@ abstract class $BondStateUpdate {
 class BondStateUpdate$Change {
   BondStateUpdate$Change._(
     this.deviceId,
-    this.connectionState,
+    this.bondState,
   );
 
   String deviceId;
-  DeviceBondState connectionState;
+  DeviceBondState bondState;
 }
 
 // ignore: avoid_classes_with_only_static_members
@@ -74,9 +74,9 @@ class BondStateUpdate$ {
         deviceIdContainer.copyWith(deviceId: deviceId),
   );
 
-  static final connectionState = Lens<BondStateUpdate, DeviceBondState>(
-    (connectionStateContainer) => connectionStateContainer.connectionState,
-    (connectionStateContainer, connectionState) =>
-        connectionStateContainer.copyWith(connectionState: connectionState),
+  static final bondState = Lens<BondStateUpdate, DeviceBondState>(
+    (bondStateContainer) => bondStateContainer.bondState,
+    (bondStateContainer, bondState) =>
+        bondStateContainer.copyWith(bondState: bondState),
   );
 }

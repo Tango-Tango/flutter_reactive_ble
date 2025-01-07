@@ -84,7 +84,7 @@ class ProtobufConverterImpl implements ProtobufConverter {
     final message = pb.BondInfo.fromBuffer(data);
     return BondStateUpdate(
       deviceId: message.id,
-      connectionState: selectFrom(
+      bondState: selectFrom(
         DeviceBondState.values,
         index: message.bondState,
         fallback: (_) => DeviceBondState.unknown,

@@ -51,7 +51,7 @@ class ReactiveBleMobilePlatform extends ReactiveBlePlatform {
       _bondUpdateRawStream.map(_protobufConverter.bondUpdateFrom).map(
         (update) {
           _logger?.log(
-            'Received $BondStateUpdate(deviceId: ${update.deviceId}, connectionState: ${update.connectionState})',
+            'Received $BondStateUpdate(deviceId: ${update.deviceId}, connectionState: ${update.bondState})',
           );
           return update;
         },

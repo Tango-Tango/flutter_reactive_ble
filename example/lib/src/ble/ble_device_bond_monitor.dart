@@ -19,7 +19,7 @@ class BleDeviceBondMonitor implements ReactiveState<DeviceBondState> {
   void startMonitoringDevice(String deviceId) {
     _bondStateSubscription ??= _ble.bondUpdateStream
         .where((update) => update.deviceId == deviceId)
-        .map((update) => update.connectionState)
+        .map((update) => update.bondState)
         .listen(_bondStateController.add);
   }
 
