@@ -1,8 +1,12 @@
 package com.signify.hue.flutterreactiveble.ble
 
+import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothDevice.BOND_BONDING
 import android.bluetooth.BluetoothGattCharacteristic
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Build
 import android.os.ParcelUuid
 import androidx.annotation.VisibleForTesting
@@ -20,7 +24,9 @@ import com.signify.hue.flutterreactiveble.ble.extensions.resolveCharacteristic
 import com.signify.hue.flutterreactiveble.ble.extensions.writeCharWithResponse
 import com.signify.hue.flutterreactiveble.ble.extensions.writeCharWithoutResponse
 import com.signify.hue.flutterreactiveble.converters.extractManufacturerData
+import com.signify.hue.flutterreactiveble.model.BondState
 import com.signify.hue.flutterreactiveble.model.ScanMode
+import com.signify.hue.flutterreactiveble.model.getBondState
 import com.signify.hue.flutterreactiveble.model.toScanSettings
 import com.signify.hue.flutterreactiveble.utils.Duration
 import com.signify.hue.flutterreactiveble.utils.toBleState
@@ -45,17 +51,29 @@ open class ReactiveBleClient(private val context: Context) : BleClient {
         private val connectionUpdateBehaviorSubject: BehaviorSubject<ConnectionUpdate> =
             BehaviorSubject.create()
 
+        private val bondUpdateBehaviorSubject: BehaviorSubject<BondUpdate> =
+            BehaviorSubject.create()
+
         lateinit var rxBleClient: RxBleClient
             internal set
+
         internal var activeConnections = mutableMapOf<String, DeviceConnector>()
     }
 
     override val connectionUpdateSubject: BehaviorSubject<ConnectionUpdate>
         get() = connectionUpdateBehaviorSubject
 
+    override val bondUpdateSubject: BehaviorSubject<BondUpdate>
+        get() = bondUpdateBehaviorSubject
+
     override fun initializeClient() {
         activeConnections = mutableMapOf()
         rxBleClient = RxBleClient.create(context)
+
+        context.applicationContext.registerReceiver(
+            bondStateReceiver,
+            IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED),
+        )
     }
 
     /*yes spread operator is not performant but after kotlin v1.60 it is less bad and it is also the
@@ -276,7 +294,7 @@ open class ReactiveBleClient(private val context: Context) : BleClient {
     internal open fun createDeviceConnector(
         device: RxBleDevice,
         timeout: Duration,
-    ) = DeviceConnector(device, timeout, connectionUpdateBehaviorSubject::onNext, connectionQueue)
+    ) = DeviceConnector(device, timeout, ::onConnectionUpdate, connectionQueue)
 
     private fun getConnection(
         deviceId: String,
@@ -404,4 +422,43 @@ open class ReactiveBleClient(private val context: Context) : BleClient {
                     .setShouldLogAttributeValues(true)
                     .build(),
             )
+
+    private fun onConnectionUpdate(update: ConnectionUpdate) {
+        when (update) {
+            is ConnectionUpdateSuccess -> {
+                val device = rxBleClient.getBleDevice(update.deviceId)
+                bondUpdateBehaviorSubject.onNext(
+                    BondUpdate(update.deviceId, device.getBondState().code),
+                )
+            }
+
+            is ConnectionUpdateError -> {
+                val device = rxBleClient.getBleDevice(update.deviceId)
+                bondUpdateBehaviorSubject.onNext(
+                    BondUpdate(update.deviceId, device.getBondState().code),
+                )
+            }
+        }
+
+        connectionUpdateBehaviorSubject.onNext(update)
+    }
+
+    private val bondStateReceiver =
+        object : BroadcastReceiver() {
+            override fun onReceive(
+                context: Context,
+                intent: Intent,
+            ) {
+                val device =
+                    intent.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE)
+                val state =
+                    intent.getIntExtra(BluetoothDevice.EXTRA_BOND_STATE, BluetoothDevice.ERROR)
+
+                if (device != null && state != BluetoothDevice.ERROR) {
+                    bondUpdateBehaviorSubject.onNext(
+                        BondUpdate(device.address, BondState.fromRaw(state).code),
+                    )
+                }
+            }
+        }
 }

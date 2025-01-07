@@ -23,10 +23,12 @@ final class PluginController {
         }
     }
     var messageQueue: [CharacteristicValueInfo] = []
+    var restoredDeviceQueue: [RestoredDeviceInfo] = []
     var connectedDeviceSink: EventSink?
+    var restoredDeviceSink: EventSink?
     var characteristicValueUpdateSink: EventSink?
 
-    func initialize(name: String, completion: @escaping PlatformMethodCompletionHandler) {
+    func initialize(name: String, args: InitializationRequest, completion: @escaping PlatformMethodCompletionHandler) {
         if let central = central {
             central.stopScan()
             central.disconnectAll()
@@ -71,6 +73,7 @@ final class PluginController {
             },
             onConnectionChange: papply(weak: self) { context, central, peripheral, change in
                 let failure: (code: ConnectionFailure, message: String)?
+                let message: DeviceInfo?
 
                 switch change {
                 case .connected:
@@ -78,18 +81,19 @@ final class PluginController {
                     return
                 case .failedToConnect(let underlyingError), .disconnected(let underlyingError):
                     failure = underlyingError.map { (.failedToConnect, "\($0)") }
-                }
-
-                let message = DeviceInfo.with {
-                    $0.id = peripheral.identifier.uuidString
-                    $0.connectionState = encode(peripheral.state)
-                    if let error = failure {
-                        $0.failure = GenericFailure.with {
-                            $0.code = Int32(error.code.rawValue)
-                            $0.message = error.message
+                    message = DeviceInfo.with {
+                        $0.id = peripheral.identifier.uuidString
+                        $0.connectionState = encode(peripheral.state)
+                        if let error = failure {
+                            $0.failure = GenericFailure.with {
+                                $0.code = Int32(error.code.rawValue)
+                                $0.message = error.message
+                            }
                         }
                     }
                 }
+
+                
 
                 context.connectedDeviceSink?.add(.success(message))
             },
@@ -136,7 +140,26 @@ final class PluginController {
                     // In case message arrives before sink is created
                     context.messageQueue.append(message)
                 }
-            }
+
+            },
+            onPeripheralsRestored: papply(weak: self) { (context, central, peripherals) -> Void in
+                let message = RestoredDeviceInfoCollection.with {
+                    $0.devices = peripherals.map({ peripheral in
+                        RestoredDeviceInfo.with {
+                            $0.id = peripheral.identifier.uuidString
+                            $0.name = peripheral.name
+                            $0.subscriptions = peripheral.subscriptions
+                        }
+                    })
+                }
+                
+                if let sink = context.restoredDeviceSink {
+                    sink.add(.success(message))
+                } else {
+                    context.restoredDeviceQueue.append(contentsOf: message.devices)
+                }
+            },
+            restorationKey: args.restorationKey
         )
 
         completion(.success(nil))
@@ -429,6 +452,8 @@ final class PluginController {
                     completion(.success(nil))
                 }
             })
+        }  catch Central.Failure.peripheralIsUnknown {
+            completion(.success(nil))
         } catch {
             completion(.failure(PluginError.unknown(error).asFlutterError))
         }

@@ -20,15 +20,18 @@ final class Central {
     typealias CharacteristicNotifyCompletionHandler = (Central, Error?) -> Void
     typealias CharacteristicValueUpdateHandler = (Central, CharacteristicInstance, Data?, Error?) -> Void
     typealias CharacteristicWriteCompletionHandler = (Central, CharacteristicInstance, Error?) -> Void
+    typealias PeripheralsRestoredHandler = (Central, [RestoredPeripheral]) -> Void
 
     private let onServicesWithCharacteristicsInitialDiscovery: ServicesWithCharacteristicsDiscoveryHandler
 
     private var peripheralDelegate: PeripheralDelegate!
     private var centralManagerDelegate: CentralManagerDelegate!
     private var centralManager: CBCentralManager!
+    private var restorationKey: String?
 
     private(set) var isScanning = false
     private(set) var activePeripherals = [PeripheralID: CBPeripheral]()
+    private(set) var restoredPeripherals = [PeripheralID: RestoredPeripheral]()
     private(set) var connectRegistry = PeripheralTaskRegistry<ConnectTaskController>()
     private let servicesWithCharacteristicsDiscoveryRegistry = PeripheralTaskRegistry<ServicesWithCharacteristicsDiscoveryTaskController>()
     private let characteristicNotifyRegistry = PeripheralTaskRegistry<CharacteristicNotifyTaskController>()
@@ -40,7 +43,9 @@ final class Central {
         onDiscovery: @escaping DiscoveryHandler,
         onConnectionChange: @escaping ConnectionChangeHandler,
         onServicesWithCharacteristicsInitialDiscovery: @escaping ServicesWithCharacteristicsDiscoveryHandler,
-        onCharacteristicValueUpdate: @escaping CharacteristicValueUpdateHandler
+        onCharacteristicValueUpdate: @escaping CharacteristicValueUpdateHandler,
+        onPeripheralsRestored: @escaping PeripheralsRestoredHandler,
+        restorationKey: String?
     ) {
         self.onServicesWithCharacteristicsInitialDiscovery = onServicesWithCharacteristicsInitialDiscovery
         self.centralManagerDelegate = CentralManagerDelegate(
@@ -55,7 +60,7 @@ final class Central {
                 onStateChange(central, state)
             },
             onDiscovery: papply(weak: self, onDiscovery),
-            onConnectionChange: papply(weak: self) { central, peripheral, change in
+            onConnectionChange: papply(weak: self) { (central: Central, peripheral: CBPeripheral, change:ConnectionChange) -> Void in
                 central.connectRegistry.updateTask(
                     key: peripheral.identifier,
                     action: { $0.handleConnectionChange(change) }
@@ -69,6 +74,37 @@ final class Central {
                 }
 
                 onConnectionChange(central, peripheral, change)
+            },
+            onPeripheralsRestored: papply(weak: self) { (central: Central, peripherals: [CBPeripheral]) -> Void in
+                peripherals.forEach {
+                    $0.delegate = self.peripheralDelegate
+                    central.activePeripherals[$0.identifier] = $0
+                    
+                    let peripheral = RestoredPeripheral($0)
+                    central.restoredPeripherals[peripheral.identifier] = peripheral
+                    
+                    if peripheral.status == .pendingDiscovery {
+                        do {
+                            try central.discoverServicesWithCharacteristics(
+                                for: peripheral.identifier,
+                                discover: .all,
+                                completion: { central, peripheral, errors in
+                                    central.restoredPeripherals[peripheral.identifier] = RestoredPeripheral(peripheral)
+                                    
+                                    if (!central.hasRestoredPeripheralsPendingDiscovery()) {
+                                        onPeripheralsRestored(central, Array(central.restoredPeripherals.values))
+                                    }
+                                }
+                            )
+                        } catch {
+                            print("Error restoring services or characteristics for peripheral. ID: \(peripheral.identifier) Error: \(error)")
+                        }
+                    }
+                }
+                
+                if (!central.hasRestoredPeripheralsPendingDiscovery()) {
+                    onPeripheralsRestored(central, Array(central.restoredPeripherals.values))
+                }
             }
         )
         self.peripheralDelegate = PeripheralDelegate(
@@ -121,9 +157,11 @@ final class Central {
                 )
             }
         )
+        self.restorationKey = restorationKey
         self.centralManager = CBCentralManager(
             delegate: centralManagerDelegate,
-            queue: nil
+            queue: nil,
+            options: restorationKey != nil ? [CBCentralManagerOptionRestoreIdentifierKey: restorationKey!] : nil
         )
     }
 
@@ -375,7 +413,13 @@ final class Central {
         return characteristic
     }
 
-    private enum Failure: Error, CustomStringConvertible {
+    func hasRestoredPeripheralsPendingDiscovery() -> Bool {
+        return restoredPeripherals.values.contains(where: { peripheral in
+            peripheral.status == .pendingDiscovery
+        })
+    }
+
+    public enum Failure: Error, CustomStringConvertible {
 
         case notPoweredOn(actualState: CBManagerState)
         case peripheralIsUnknown(PeripheralID)

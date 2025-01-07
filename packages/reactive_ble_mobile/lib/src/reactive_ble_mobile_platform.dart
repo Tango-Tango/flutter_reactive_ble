@@ -9,33 +9,53 @@ class ReactiveBleMobilePlatform extends ReactiveBlePlatform {
     required ArgsToProtobufConverter argsToProtobufConverter,
     required ProtobufConverter protobufConverter,
     required MethodChannel bleMethodChannel,
+    required Stream<List<int>> bondUpdateChannel,
     required Stream<List<int>> connectedDeviceChannel,
+    required Stream<List<int>> restoredDeviceChannel,
     required Stream<List<int>> charUpdateChannel,
     required Stream<List<int>> bleDeviceScanChannel,
     required Stream<List<int>> bleStatusChannel,
     Logger? logger,
+    String? restorationKey,
   })  : _argsToProtobufConverter = argsToProtobufConverter,
         _protobufConverter = protobufConverter,
         _bleMethodChannel = bleMethodChannel,
+        _bondUpdateRawStream = bondUpdateChannel,
         _connectedDeviceRawStream = connectedDeviceChannel,
+        _restoredDeviceRawStream = restoredDeviceChannel,
         _charUpdateRawStream = charUpdateChannel,
         _bleStatusRawChannel = bleStatusChannel,
         _bleDeviceScanRawStream = bleDeviceScanChannel,
-        _logger = logger;
+        _logger = logger,
+        _restorationKey = restorationKey;
 
   final ArgsToProtobufConverter _argsToProtobufConverter;
   final ProtobufConverter _protobufConverter;
   final MethodChannel _bleMethodChannel;
+  final Stream<List<int>> _bondUpdateRawStream;
   final Stream<List<int>> _connectedDeviceRawStream;
+  final Stream<List<int>> _restoredDeviceRawStream;
   final Stream<List<int>> _charUpdateRawStream;
   final Stream<List<int>> _bleDeviceScanRawStream;
   final Stream<List<int>> _bleStatusRawChannel;
   final Logger? _logger;
+  final String? _restorationKey;
 
   Stream<ConnectionStateUpdate>? _connectionUpdateStream;
   Stream<CharacteristicValue>? _charValueStream;
   Stream<ScanResult>? _scanResultStream;
   Stream<BleStatus>? _bleStatusStream;
+
+  @override
+  Stream<BondStateUpdate> get bondUpdateStream =>
+      _bondUpdateRawStream.map(_protobufConverter.bondUpdateFrom).map(
+        (update) {
+          _logger?.log(
+            'Received $BondStateUpdate(deviceId: ${update.deviceId}, connectionState: ${update.bondState})',
+          );
+          return update;
+        },
+      );
 
   @override
   Stream<ConnectionStateUpdate> get connectionUpdateStream =>
@@ -49,6 +69,16 @@ class ReactiveBleMobilePlatform extends ReactiveBlePlatform {
           return update;
         },
       );
+
+  @override
+  Stream<RestoredPeripheral> get restoredDeviceStream =>
+      _restoredDeviceRawStream
+          .map(_protobufConverter.restoredDevicesFrom)
+          .take(1)
+          .expand((devices) {
+        _logger?.log('Received $devices');
+        return devices;
+      });
 
   @override
   Stream<CharacteristicValue> get charValueUpdateStream =>
@@ -86,7 +116,11 @@ class ReactiveBleMobilePlatform extends ReactiveBlePlatform {
   @override
   Future<void> initialize() {
     _logger?.log('Initialize BLE platform');
-    return _bleMethodChannel.invokeMethod("initialize");
+    return _bleMethodChannel.invokeMethod(
+        "initialize",
+        _argsToProtobufConverter
+            .createInitializationRequest(_restorationKey)
+            .writeToBuffer());
   }
 
   @override
@@ -317,11 +351,14 @@ class ReactiveBleMobilePlatform extends ReactiveBlePlatform {
 class ReactiveBleMobilePlatformFactory {
   const ReactiveBleMobilePlatformFactory();
 
-  ReactiveBleMobilePlatform create({Logger? logger}) {
+  ReactiveBleMobilePlatform create({Logger? logger, String? restorationKey}) {
     const _bleMethodChannel = MethodChannel("flutter_reactive_ble_method");
 
     const connectedDeviceChannel =
         EventChannel("flutter_reactive_ble_connected_device");
+    const restoredDeviceChannel =
+        EventChannel("flutter_reactive_ble_restored_device");
+    const bondEventChannel = EventChannel("flutter_reactive_ble_bond_update");
     const charEventChannel = EventChannel("flutter_reactive_ble_char_update");
     const scanEventChannel = EventChannel("flutter_reactive_ble_scan");
     const bleStatusChannel = EventChannel("flutter_reactive_ble_status");
@@ -330,8 +367,12 @@ class ReactiveBleMobilePlatformFactory {
       protobufConverter: const ProtobufConverterImpl(),
       argsToProtobufConverter: const ArgsToProtobufConverterImpl(),
       bleMethodChannel: _bleMethodChannel,
+      bondUpdateChannel:
+          bondEventChannel.receiveBroadcastStream().cast<List<int>>(),
       connectedDeviceChannel:
           connectedDeviceChannel.receiveBroadcastStream().cast<List<int>>(),
+      restoredDeviceChannel:
+          restoredDeviceChannel.receiveBroadcastStream().cast<List<int>>(),
       charUpdateChannel:
           charEventChannel.receiveBroadcastStream().cast<List<int>>(),
       bleDeviceScanChannel:
@@ -339,6 +380,7 @@ class ReactiveBleMobilePlatformFactory {
       bleStatusChannel:
           bleStatusChannel.receiveBroadcastStream().cast<List<int>>(),
       logger: logger,
+      restorationKey: restorationKey,
     );
   }
 }

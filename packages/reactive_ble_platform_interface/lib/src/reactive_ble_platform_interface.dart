@@ -24,6 +24,14 @@ abstract class ReactiveBlePlatform extends PlatformInterface {
     _instance = instance;
   }
 
+  /// Stream that provides status updates regarding device bonding.
+  ///
+  /// It is important to subscribe to this stream before connecting to a device
+  /// since it can happen that some results are missed.
+  Stream<BondStateUpdate> get bondUpdateStream {
+    throw UnimplementedError('scanStream has not been implemented.');
+  }
+
   /// Stream providing ble scan results.
   ///
   /// It is important to subscribe to this stream before scanning for devices
@@ -47,6 +55,14 @@ abstract class ReactiveBlePlatform extends PlatformInterface {
   /// device since it can happen that some results are missed.
   Stream<ConnectionStateUpdate> get connectionUpdateStream {
     throw UnimplementedError('connectionStream has not been implemented.');
+  }
+
+  /// Listen to this stream to get devices restored on initialization.
+  ///
+  /// It is important to subscribe to this stream before calling [initialize]
+  /// since it can happen that some results are missed.
+  Stream<RestoredPeripheral> get restoredDeviceStream {
+    throw UnimplementedError('restoreDeviceStream has not been implemented.');
   }
 
   /// Stream that provides value updates about the characteristics that are read

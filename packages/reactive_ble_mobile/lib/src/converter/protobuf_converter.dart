@@ -9,7 +9,11 @@ abstract class ProtobufConverter {
 
   ScanResult scanResultFrom(List<int> data);
 
+  BondStateUpdate bondUpdateFrom(List<int> data);
+
   ConnectionStateUpdate connectionStateUpdateFrom(List<int> data);
+
+  List<RestoredPeripheral> restoredDevicesFrom(List<int> data);
 
   Result<Unit, GenericFailure<ClearGattCacheError>?> clearGattCacheResultFrom(
     List<int> data,
@@ -76,6 +80,19 @@ class ProtobufConverterImpl implements ProtobufConverter {
   }
 
   @override
+  BondStateUpdate bondUpdateFrom(List<int> data) {
+    final message = pb.BondInfo.fromBuffer(data);
+    return BondStateUpdate(
+      deviceId: message.id,
+      bondState: selectFrom(
+        DeviceBondState.values,
+        index: message.bondState,
+        fallback: (_) => DeviceBondState.unknown,
+      ),
+    );
+  }
+
+  @override
   ConnectionStateUpdate connectionStateUpdateFrom(List<int> data) {
     final deviceInfo = pb.DeviceInfo.fromBuffer(data);
     return ConnectionStateUpdate(
@@ -92,6 +109,25 @@ class ProtobufConverterImpl implements ProtobufConverter {
         fallback: (int? rawOrNull) => ConnectionError.unknown,
       ),
     );
+  }
+
+  @override
+  List<RestoredPeripheral> restoredDevicesFrom(List<int> data) {
+    final collection = pb.RestoredDeviceInfoCollection.fromBuffer(data);
+
+    return collection.devices
+        .map((info) => RestoredPeripheral(
+              id: info.id,
+              name: info.name,
+              subscriptions: info.subscriptions
+                  .map((address) => QualifiedCharacteristic(
+                        characteristicId: Uuid(address.characteristicUuid.data),
+                        serviceId: Uuid(address.serviceUuid.data),
+                        deviceId: info.id,
+                      ))
+                  .toList(),
+            ))
+        .toList();
   }
 
   @override

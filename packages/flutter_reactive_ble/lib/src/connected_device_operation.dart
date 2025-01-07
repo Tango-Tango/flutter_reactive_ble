@@ -17,6 +17,11 @@ abstract class ConnectedDeviceOperation {
     required List<int> value,
   });
 
+  Stream<List<int>> attachToCharacteristicSubscription(
+    CharacteristicInstance characteristic,
+    Future<void> isDisconnected,
+  );
+
   Stream<List<int>> subscribeToCharacteristic(
     CharacteristicInstance characteristic,
     Future<void> isDisconnected,
@@ -86,6 +91,29 @@ class ConnectedDeviceOperationImpl implements ConnectedDeviceOperation {
       onListenEmitFrom: () => _blePlatform
           .subscribeToNotifications(characteristic)
           .asyncExpand((_) => specificCharacteristicValueStream),
+      onCancel: () => _blePlatform
+          .stopSubscribingToNotifications(characteristic)
+          .catchError((Object e) =>
+              // ignore: avoid_print
+              print("Error unsubscribing from notifications: $e")),
+    );
+
+    isDisconnected.then<void>((_) => autosubscribingRepeater.dispose());
+
+    return autosubscribingRepeater.stream;
+  }
+
+  @override
+  Stream<List<int>> attachToCharacteristicSubscription(
+    CharacteristicInstance characteristic,
+    Future<void> isDisconnected,
+  ) {
+    final specificCharacteristicValueStream = characteristicValueStream
+        .where((update) => update.characteristic == characteristic)
+        .map((update) => update.result.dematerialize());
+
+    final autosubscribingRepeater = Repeater<List<int>>.broadcast(
+      onListenEmitFrom: () => specificCharacteristicValueStream,
       onCancel: () => _blePlatform
           .stopSubscribingToNotifications(characteristic)
           .catchError((Object e) =>

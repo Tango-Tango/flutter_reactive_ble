@@ -13,6 +13,7 @@ import java.util.UUID
 @Suppress("TooManyFunctions")
 interface BleClient {
     val connectionUpdateSubject: BehaviorSubject<ConnectionUpdate>
+    val bondUpdateSubject: BehaviorSubject<BondUpdate>
 
     fun initializeClient()
 

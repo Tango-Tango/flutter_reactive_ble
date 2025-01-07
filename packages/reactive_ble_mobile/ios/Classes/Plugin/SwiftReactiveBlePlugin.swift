@@ -16,6 +16,23 @@ public class SwiftReactiveBlePlugin: NSObject, FlutterPlugin {
             .setStreamHandler(plugin.connectedDeviceStreamHandler)
         FlutterEventChannel(name: "flutter_reactive_ble_char_update", binaryMessenger: registrar.messenger())
             .setStreamHandler(plugin.characteristicValueUpdateStreamHandler)
+        FlutterEventChannel(name: "flutter_reactive_ble_restored_device", binaryMessenger: registrar.messenger())
+            .setStreamHandler(plugin.restoredDeviceStreamHandler)
+        FlutterEventChannel(name: "flutter_reactive_ble_bond_update", binaryMessenger: registrar.messenger())
+            .setStreamHandler(plugin.bondUpdateStreamHandler)
+    }
+
+    var bondUpdateStreamHandler: StreamHandler<PluginController> {
+        return StreamHandler(
+            name: "bond update stream handler",
+            context: context,
+            onListen: { context, sink in
+                return nil
+            },
+            onCancel: { context in
+                return nil
+            }
+        )
     }
 
     var statusStreamHandler: StreamHandler<PluginController> {
@@ -60,6 +77,31 @@ public class SwiftReactiveBlePlugin: NSObject, FlutterPlugin {
             }
         )
     }
+    
+    var restoredDeviceStreamHandler: StreamHandler<PluginController> {
+        return StreamHandler(
+            name: "restored device stream handler",
+            context: context,
+            onListen: { context, sink in
+                context.restoredDeviceSink = sink
+                var messages = [RestoredDeviceInfo]()
+                context.restoredDeviceQueue.forEach { msg in
+                    messages.append(msg)
+                }
+                context.restoredDeviceQueue.removeAll()
+                let message = RestoredDeviceInfoCollection.with {
+                    $0.devices = messages
+                }
+                sink.add(.success(message))
+                return nil
+            },
+            onCancel: { context in
+                context.restoredDeviceQueue.removeAll()
+                context.restoredDeviceSink = nil
+                return nil
+            }
+        )
+    }
 
     var characteristicValueUpdateStreamHandler: StreamHandler<PluginController> {
         return StreamHandler(
@@ -84,8 +126,8 @@ public class SwiftReactiveBlePlugin: NSObject, FlutterPlugin {
     private let context = PluginController()
 
     private let methodHandler = MethodHandler<PluginController>([
-        AnyPlatformMethod(NullaryPlatformMethod(name: "initialize") { name, context, completion in
-            context.initialize(name: name, completion: completion)
+        AnyPlatformMethod(UnaryPlatformMethod   (name: "initialize") { (name, context, args: InitializationRequest, completion) in
+            context.initialize(name: name, args: args, completion: completion)
         }),
         AnyPlatformMethod(NullaryPlatformMethod(name: "deinitialize") { name, context, completion in
             context.deinitialize(name: name, completion: completion)

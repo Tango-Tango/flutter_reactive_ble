@@ -19,6 +19,10 @@ abstract class DeviceConnector {
     Map<Uuid, List<Uuid>>? servicesWithCharacteristicsToDiscover,
     Duration? connectionTimeout,
   });
+
+  Stream<ConnectionStateUpdate> attachToConnectedDevice({
+    required String id,
+  });
 }
 
 class DeviceConnectorImpl implements DeviceConnector {
@@ -102,6 +106,27 @@ class DeviceConnectorImpl implements DeviceConnector {
         prescanDuration,
       );
     }
+  }
+
+  @override
+  Stream<ConnectionStateUpdate> attachToConnectedDevice({
+    required String id,
+  }) {
+    final specificConnectedDeviceStream = deviceConnectionStateUpdateStream
+        .where((update) => update.deviceId == id)
+        .expand((update) =>
+            update.connectionState != DeviceConnectionState.disconnected
+                ? [update]
+                : [update, null])
+        .takeWhile((update) => update != null)
+        .cast<ConnectionStateUpdate>();
+
+    final autoconnectingRepeater = Repeater.broadcast(
+      onListenEmitFrom: () => specificConnectedDeviceStream,
+      onCancel: () => _blePlatform.disconnectDevice(id),
+    );
+
+    return autoconnectingRepeater.stream;
   }
 
   Stream<ConnectionStateUpdate> _prescanAndConnect(
