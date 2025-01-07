@@ -18,6 +18,21 @@ public class SwiftReactiveBlePlugin: NSObject, FlutterPlugin {
             .setStreamHandler(plugin.characteristicValueUpdateStreamHandler)
         FlutterEventChannel(name: "flutter_reactive_ble_restored_device", binaryMessenger: registrar.messenger())
             .setStreamHandler(plugin.restoredDeviceStreamHandler)
+        FlutterEventChannel(name: "flutter_reactive_ble_bond_update", binaryMessenger: registrar.messenger())
+            .setStreamHandler(plugin.bondUpdateStreamHandler)
+    }
+
+    var bondUpdateStreamHandler: StreamHandler<PluginController> {
+        return StreamHandler(
+            name: "bond update stream handler",
+            context: context,
+            onListen: { context, sink in
+                return nil
+            },
+            onCancel: { context in
+                return nil
+            }
+        )
     }
 
     var statusStreamHandler: StreamHandler<PluginController> {

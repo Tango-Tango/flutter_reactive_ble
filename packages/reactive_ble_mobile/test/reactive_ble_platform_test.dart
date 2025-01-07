@@ -28,6 +28,7 @@ void main() {
     late MockMethodChannel _methodChannel;
     late ArgsToProtobufConverter _argsConverter;
     late ProtobufConverter _protobufConverter;
+    late StreamController<List<int>> _bondUpdateStreamController;
     late StreamController<List<int>> _connectedDeviceStreamController;
     late StreamController<List<int>> _restoredDeviceStreamController;
     late StreamController<List<int>> _argsStreamController;
@@ -38,6 +39,7 @@ void main() {
       _argsConverter = MockArgsToProtobufConverter();
       _methodChannel = MockMethodChannel();
       _protobufConverter = MockProtobufConverter();
+      _bondUpdateStreamController = StreamController();
       _connectedDeviceStreamController = StreamController();
       _restoredDeviceStreamController = StreamController();
       _argsStreamController = StreamController();
@@ -52,6 +54,7 @@ void main() {
         argsToProtobufConverter: _argsConverter,
         bleMethodChannel: _methodChannel,
         protobufConverter: _protobufConverter,
+        bondUpdateChannel: _bondUpdateStreamController.stream,
         connectedDeviceChannel: _connectedDeviceStreamController.stream,
         restoredDeviceChannel: _restoredDeviceStreamController.stream,
         charUpdateChannel: _argsStreamController.stream,
@@ -62,6 +65,7 @@ void main() {
     });
 
     tearDown(() {
+      _bondUpdateStreamController.close();
       _connectedDeviceStreamController.close();
       _restoredDeviceStreamController.close();
       _argsStreamController.close();
@@ -618,6 +622,41 @@ void main() {
 
       test('It emits correct values', () {
         expect(_bleStatusStream, emitsInOrder(<BleStatus>[status1, status2]));
+      });
+    });
+
+    group('bond status', () {
+      const status1 = BondStateUpdate(
+        deviceId: '123',
+        bondState: DeviceBondState.unknown,
+      );
+
+      const status2 = BondStateUpdate(
+        deviceId: '123',
+        bondState: DeviceBondState.bonding,
+      );
+
+      Stream<BondStateUpdate>? _bondUpdateStream;
+
+      setUp(() {
+        _bondUpdateStreamController.addStream(
+          Stream<List<int>>.fromIterable([
+            [1],
+            [0]
+          ]),
+        );
+
+        when(_protobufConverter.bondUpdateFrom([1])).thenReturn(status1);
+        when(_protobufConverter.bondUpdateFrom([0])).thenReturn(status2);
+
+        _bondUpdateStream = _sut.bondUpdateStream;
+      });
+
+      test('It emits correct values', () {
+        expect(
+          _bondUpdateStream,
+          emitsInOrder(<BondStateUpdate>[status1, status2]),
+        );
       });
     });
 

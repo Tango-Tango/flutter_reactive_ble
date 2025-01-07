@@ -1,16 +1,20 @@
 import 'dart:async';
 
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
+import 'package:flutter_reactive_ble_example/src/ble/ble_device_bond_monitor.dart';
 import 'package:flutter_reactive_ble_example/src/ble/reactive_state.dart';
 
 class BleDeviceConnector extends ReactiveState<ConnectionStateUpdate> {
   BleDeviceConnector({
     required FlutterReactiveBle ble,
+    required BleDeviceBondMonitor bondMonitor,
     required void Function(String message) logMessage,
   })  : _ble = ble,
+        _bondMonitor = bondMonitor,
         _logMessage = logMessage;
 
   final FlutterReactiveBle _ble;
+  final BleDeviceBondMonitor _bondMonitor;
   final void Function(String message) _logMessage;
 
   @override
@@ -22,6 +26,8 @@ class BleDeviceConnector extends ReactiveState<ConnectionStateUpdate> {
   late StreamSubscription<ConnectionStateUpdate> _connection;
 
   Future<void> connect(String deviceId) async {
+    _bondMonitor.startMonitoringDevice(deviceId);
+
     _logMessage('Start connecting to $deviceId');
     _connection = _ble.connectToDevice(id: deviceId).listen(
       (update) {
@@ -35,6 +41,8 @@ class BleDeviceConnector extends ReactiveState<ConnectionStateUpdate> {
   }
 
   Future<void> disconnect(String deviceId) async {
+    _bondMonitor.stopMontoringDevice(deviceId);
+
     try {
       _logMessage('disconnecting to device: $deviceId');
       await _connection.cancel();

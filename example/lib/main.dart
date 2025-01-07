@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
+import 'package:flutter_reactive_ble_example/src/ble/ble_device_bond_monitor.dart';
 import 'package:flutter_reactive_ble_example/src/ble/ble_device_connector.dart';
 import 'package:flutter_reactive_ble_example/src/ble/ble_device_interactor.dart';
 import 'package:flutter_reactive_ble_example/src/ble/ble_scanner.dart';
@@ -19,8 +20,10 @@ void main() {
   final _bleLogger = BleLogger(ble: _ble);
   final _scanner = BleScanner(ble: _ble, logMessage: _bleLogger.addToLog);
   final _monitor = BleStatusMonitor(_ble);
+  final _bondMonitor = BleDeviceBondMonitor(_ble);
   final _connector = BleDeviceConnector(
     ble: _ble,
+    bondMonitor: _bondMonitor,
     logMessage: _bleLogger.addToLog,
   );
   final _serviceDiscoverer = BleDeviceInteractor(
@@ -39,6 +42,7 @@ void main() {
         Provider.value(value: _connector),
         Provider.value(value: _serviceDiscoverer),
         Provider.value(value: _bleLogger),
+        Provider.value(value: _bondMonitor),
         StreamProvider<BleScannerState?>(
           create: (_) => _scanner.state,
           initialData: const BleScannerState(
@@ -49,6 +53,10 @@ void main() {
         StreamProvider<BleStatus?>(
           create: (_) => _monitor.state,
           initialData: BleStatus.unknown,
+        ),
+        StreamProvider<DeviceBondState>(
+          create: (_) => _bondMonitor.state,
+          initialData: DeviceBondState.unknown,
         ),
         StreamProvider<ConnectionStateUpdate>(
           create: (_) => _connector.state,

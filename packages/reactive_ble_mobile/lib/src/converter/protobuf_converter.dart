@@ -9,6 +9,8 @@ abstract class ProtobufConverter {
 
   ScanResult scanResultFrom(List<int> data);
 
+  BondStateUpdate bondUpdateFrom(List<int> data);
+
   ConnectionStateUpdate connectionStateUpdateFrom(List<int> data);
 
   List<RestoredPeripheral> restoredDevicesFrom(List<int> data);
@@ -73,6 +75,19 @@ class ProtobufConverterImpl implements ProtobufConverter {
             getFailure: () => message.failure,
             codes: ScanFailure.values,
             fallback: (rawOrNull) => ScanFailure.unknown),
+      ),
+    );
+  }
+
+  @override
+  BondStateUpdate bondUpdateFrom(List<int> data) {
+    final message = pb.BondInfo.fromBuffer(data);
+    return BondStateUpdate(
+      deviceId: message.id,
+      bondState: selectFrom(
+        DeviceBondState.values,
+        index: message.bondState,
+        fallback: (_) => DeviceBondState.unknown,
       ),
     );
   }

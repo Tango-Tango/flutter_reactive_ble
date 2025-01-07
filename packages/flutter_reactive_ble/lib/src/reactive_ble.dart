@@ -65,6 +65,13 @@ class FlutterReactiveBle {
   /// Also see [statusStream].
   BleStatus get status => _status;
 
+  /// A stream providing bond updates for all the connected BLE devices.
+  Stream<BondStateUpdate> get bondUpdateStream =>
+      Repeater.broadcast(onListenEmitFrom: () async* {
+        await initialize();
+        yield* _blePlatform.bondUpdateStream;
+      }).stream;
+
   /// A stream providing connection updates for all the connected BLE devices.
   Stream<ConnectionStateUpdate> get connectedDeviceStream =>
       Repeater.broadcast(onListenEmitFrom: () async* {
