@@ -72,7 +72,7 @@ open class ReactiveBleClient(private val context: Context) : BleClient {
 
         context.applicationContext.registerReceiver(
             bondStateReceiver,
-            IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED)
+            IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED),
         )
     }
 
@@ -428,31 +428,37 @@ open class ReactiveBleClient(private val context: Context) : BleClient {
             is ConnectionUpdateSuccess -> {
                 val device = rxBleClient.getBleDevice(update.deviceId)
                 bondUpdateBehaviorSubject.onNext(
-                    BondUpdate(update.deviceId, device.getBondState().code)
+                    BondUpdate(update.deviceId, device.getBondState().code),
                 )
             }
+
             is ConnectionUpdateError -> {
                 val device = rxBleClient.getBleDevice(update.deviceId)
                 bondUpdateBehaviorSubject.onNext(
-                    BondUpdate(update.deviceId, device.getBondState().code)
+                    BondUpdate(update.deviceId, device.getBondState().code),
                 )
             }
         }
 
         connectionUpdateBehaviorSubject.onNext(update)
-
     }
 
-    private val bondStateReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            val device = intent.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE)
-            val state = intent.getIntExtra(BluetoothDevice.EXTRA_BOND_STATE, BluetoothDevice.ERROR)
+    private val bondStateReceiver =
+        object : BroadcastReceiver() {
+            override fun onReceive(
+                context: Context,
+                intent: Intent,
+            ) {
+                val device =
+                    intent.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE)
+                val state =
+                    intent.getIntExtra(BluetoothDevice.EXTRA_BOND_STATE, BluetoothDevice.ERROR)
 
-            if (device != null && state != BluetoothDevice.ERROR) {
-                bondUpdateBehaviorSubject.onNext(
-                    BondUpdate(device.address, BondState.fromRaw(state).code)
-                )
+                if (device != null && state != BluetoothDevice.ERROR) {
+                    bondUpdateBehaviorSubject.onNext(
+                        BondUpdate(device.address, BondState.fromRaw(state).code),
+                    )
+                }
             }
         }
-    }
 }

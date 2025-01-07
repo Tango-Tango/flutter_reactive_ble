@@ -41,8 +41,6 @@ data class ScanInfo(
     }
 }
 
-data class BondUpdate(val deviceId: String, val bondState: Int)
-
 sealed class ConnectionUpdate
 
 data class ConnectionUpdateSuccess(val deviceId: String, val connectionState: Int) : ConnectionUpdate()
@@ -72,6 +70,11 @@ sealed class RequestConnectionPriorityResult
 data class RequestConnectionPrioritySuccess(val deviceId: String) : RequestConnectionPriorityResult()
 
 data class RequestConnectionPriorityFailed(val deviceId: String, val errorMessage: String) : RequestConnectionPriorityResult()
+
+data class BondUpdate(
+    val deviceId: String,
+    val bondState: Int,
+)
 
 enum class BleStatus(val code: Int) {
     UNKNOWN(code = 0),

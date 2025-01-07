@@ -5,7 +5,9 @@ import io.flutter.plugin.common.EventChannel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 
-class DeviceBondHandler(private val bleClient: com.signify.hue.flutterreactiveble.ble.BleClient) : EventChannel.StreamHandler {
+class DeviceBondHandler(
+    private val bleClient: com.signify.hue.flutterreactiveble.ble.BleClient,
+) : EventChannel.StreamHandler {
     private var sink: EventChannel.EventSink? = null
     private val converter = ProtobufMessageConverter()
 
@@ -17,12 +19,13 @@ class DeviceBondHandler(private val bleClient: com.signify.hue.flutterreactivebl
     ) {
         eventSink?.let {
             sink = eventSink
-            disposable = bleClient.bondUpdateSubject
-                .distinct()
-                .observeOn(AndroidSchedulers.mainThread())
-                .map(converter::convertToBondInfo)
-                .map { it.toByteArray() }
-                .subscribe { sink?.success(it) }
+            disposable =
+                bleClient.bondUpdateSubject
+                    .distinct()
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .map(converter::convertToBondInfo)
+                    .map { it.toByteArray() }
+                    .subscribe { sink?.success(it) }
         }
     }
 

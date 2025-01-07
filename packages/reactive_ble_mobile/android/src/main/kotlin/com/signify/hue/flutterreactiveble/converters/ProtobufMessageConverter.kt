@@ -57,7 +57,8 @@ class ProtobufMessageConverter {
             .build()
 
     fun convertToBondInfo(update: BondUpdate): pb.BondInfo =
-        pb.BondInfo.newBuilder()
+        pb.BondInfo
+            .newBuilder()
             .setId(update.deviceId)
             .setBondState(update.bondState)
             .build()
