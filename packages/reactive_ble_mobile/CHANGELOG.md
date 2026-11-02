@@ -1,3 +1,30 @@
+## 5.6.0
+
+* Support built-in Kotlin, AGP 9.0+ and Android SDK 37 #934
+* Set min Flutter version to 3.44.0
+
+## 5.5.0
+
+* Added Swift Package Manager support #921
+
+## 5.4.2
+
+* Update to Gradle distribution 8.4 #904
+* Bump protobuf to 6.0.0 #923 (and #916)
+
+## 5.4.1
+
+* Prevent index out of range crash when filtering services and characteristics #919
+* Improve stack trace of exceptions from read(Characteristic) #896
+* Upgraded protobuf to v3 and upgraded the android example to fix the deprecated imperative apply of gradle plugins #871
+
+## 5.4.0
+
+* Support for MacOS #889
+* Fixes subscription to _deviceConnector.deviceConnectionStateUpdateStream leaking #876
+* Workspace upgrade (dependencies) & gitignore sync #857
+* Run ktlint -F #766
+
 ## 5.3.1
 
 *  Use proper platform_interface dependency version #837

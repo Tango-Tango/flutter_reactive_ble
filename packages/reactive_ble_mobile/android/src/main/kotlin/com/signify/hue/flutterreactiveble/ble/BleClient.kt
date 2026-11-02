@@ -46,7 +46,7 @@ interface BleClient {
         deviceId: String,
         characteristicId: UUID,
         characteristicInstanceId: Int,
-    ): Observable<ByteArray>
+    ): Observable<Observable<ByteArray>>
 
     fun writeCharacteristicWithResponse(
         deviceId: String,

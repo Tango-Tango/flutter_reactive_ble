@@ -480,6 +480,23 @@ class MockConnectedDeviceOperation extends _i1.Mock
       ) as _i4.Stream<List<int>>);
 
   @override
+  _i4.Future<_i4.Stream<List<int>>> subscribeToCharacteristicAsync(
+    _i2.CharacteristicInstance? characteristic,
+    _i4.Future<void>? isDisconnected,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #subscribeToCharacteristicAsync,
+          [
+            characteristic,
+            isDisconnected,
+          ],
+        ),
+        returnValue: _i4.Future<_i4.Stream<List<int>>>.value(
+            _i4.Stream<List<int>>.empty()),
+      ) as _i4.Future<_i4.Stream<List<int>>>);
+
+  @override
   _i4.Future<int> requestMtu(
     String? deviceId,
     int? mtu,
