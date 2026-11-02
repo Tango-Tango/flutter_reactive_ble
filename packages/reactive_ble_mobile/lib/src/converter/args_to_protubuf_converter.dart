@@ -3,6 +3,8 @@ import 'package:reactive_ble_platform_interface/reactive_ble_platform_interface.
 import '../generated/bledata.pb.dart' as pb;
 
 abstract class ArgsToProtobufConverter {
+  pb.InitializationRequest createInitializationRequest(String? restorationKey);
+
   pb.ConnectToDeviceRequest createConnectToDeviceArgs(
     String id,
     Map<Uuid, List<Uuid>>? servicesWithCharacteristicsToDiscover,
@@ -16,16 +18,16 @@ abstract class ArgsToProtobufConverter {
   );
 
   pb.WriteCharacteristicRequest createWriteCharacteristicRequest(
-      CharacteristicInstance characteristic,
+    CharacteristicInstance characteristic,
     List<int> value,
   );
 
   pb.NotifyCharacteristicRequest createNotifyCharacteristicRequest(
-      CharacteristicInstance characteristic,
+    CharacteristicInstance characteristic,
   );
 
   pb.NotifyNoMoreCharacteristicRequest createNotifyNoMoreCharacteristicRequest(
-      CharacteristicInstance characteristic,
+    CharacteristicInstance characteristic,
   );
 
   pb.NegotiateMtuRequest createNegotiateMtuRequest(
@@ -53,6 +55,17 @@ abstract class ArgsToProtobufConverter {
 
 class ArgsToProtobufConverterImpl implements ArgsToProtobufConverter {
   const ArgsToProtobufConverterImpl();
+
+  @override
+  pb.InitializationRequest createInitializationRequest(String? restorationKey) {
+    final args = pb.InitializationRequest();
+
+    if (restorationKey != null) {
+      args.restorationKey = restorationKey;
+    }
+
+    return args;
+  }
 
   @override
   pb.ConnectToDeviceRequest createConnectToDeviceArgs(

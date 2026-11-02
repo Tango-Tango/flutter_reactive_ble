@@ -13,6 +13,7 @@ import java.util.UUID
 @Suppress("TooManyFunctions")
 interface BleClient {
     val connectionUpdateSubject: BehaviorSubject<ConnectionUpdate>
+    val bondUpdateSubject: BehaviorSubject<BondUpdate>
 
     fun initializeClient()
 
@@ -45,7 +46,7 @@ interface BleClient {
         deviceId: String,
         characteristicId: UUID,
         characteristicInstanceId: Int,
-    ): Observable<ByteArray>
+    ): Observable<Observable<ByteArray>>
 
     fun writeCharacteristicWithResponse(
         deviceId: String,

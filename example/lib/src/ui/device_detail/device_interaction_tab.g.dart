@@ -11,6 +11,7 @@ abstract class $DeviceInteractionViewModel {
 
   String get deviceId;
   Connectable get connectableStatus;
+  DeviceBondState get bondState;
   DeviceConnectionState get connectionStatus;
   BleDeviceConnector get deviceConnector;
   Future<int> Function() get readRssi;
@@ -19,6 +20,7 @@ abstract class $DeviceInteractionViewModel {
   DeviceInteractionViewModel copyWith({
     String? deviceId,
     Connectable? connectableStatus,
+    DeviceBondState? bondState,
     DeviceConnectionState? connectionStatus,
     BleDeviceConnector? deviceConnector,
     Future<int> Function()? readRssi,
@@ -27,6 +29,7 @@ abstract class $DeviceInteractionViewModel {
       DeviceInteractionViewModel(
         deviceId: deviceId ?? this.deviceId,
         connectableStatus: connectableStatus ?? this.connectableStatus,
+        bondState: bondState ?? this.bondState,
         connectionStatus: connectionStatus ?? this.connectionStatus,
         deviceConnector: deviceConnector ?? this.deviceConnector,
         readRssi: readRssi ?? this.readRssi,
@@ -38,6 +41,7 @@ abstract class $DeviceInteractionViewModel {
     final change = DeviceInteractionViewModel$Change._(
       this.deviceId,
       this.connectableStatus,
+      this.bondState,
       this.connectionStatus,
       this.deviceConnector,
       this.readRssi,
@@ -47,6 +51,7 @@ abstract class $DeviceInteractionViewModel {
     return DeviceInteractionViewModel(
       deviceId: change.deviceId,
       connectableStatus: change.connectableStatus,
+      bondState: change.bondState,
       connectionStatus: change.connectionStatus,
       deviceConnector: change.deviceConnector,
       readRssi: change.readRssi,
@@ -56,7 +61,7 @@ abstract class $DeviceInteractionViewModel {
 
   @override
   String toString() =>
-      "DeviceInteractionViewModel(deviceId: $deviceId, connectableStatus: $connectableStatus, connectionStatus: $connectionStatus, deviceConnector: $deviceConnector, readRssi: $readRssi, discoverServices: $discoverServices)";
+      "DeviceInteractionViewModel(deviceId: $deviceId, connectableStatus: $connectableStatus, bondState: $bondState, connectionStatus: $connectionStatus, deviceConnector: $deviceConnector, readRssi: $readRssi, discoverServices: $discoverServices)";
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
@@ -65,6 +70,7 @@ abstract class $DeviceInteractionViewModel {
       other.runtimeType == runtimeType &&
       deviceId == other.deviceId &&
       connectableStatus == other.connectableStatus &&
+      bondState == other.bondState &&
       connectionStatus == other.connectionStatus &&
       deviceConnector == other.deviceConnector &&
       readRssi == other.readRssi &&
@@ -76,6 +82,7 @@ abstract class $DeviceInteractionViewModel {
     var result = 17;
     result = 37 * result + deviceId.hashCode;
     result = 37 * result + connectableStatus.hashCode;
+    result = 37 * result + bondState.hashCode;
     result = 37 * result + connectionStatus.hashCode;
     result = 37 * result + deviceConnector.hashCode;
     result = 37 * result + readRssi.hashCode;
@@ -88,6 +95,7 @@ class DeviceInteractionViewModel$Change {
   DeviceInteractionViewModel$Change._(
     this.deviceId,
     this.connectableStatus,
+    this.bondState,
     this.connectionStatus,
     this.deviceConnector,
     this.readRssi,
@@ -96,6 +104,7 @@ class DeviceInteractionViewModel$Change {
 
   String deviceId;
   Connectable connectableStatus;
+  DeviceBondState bondState;
   DeviceConnectionState connectionStatus;
   BleDeviceConnector deviceConnector;
   Future<int> Function() readRssi;
@@ -117,6 +126,12 @@ class DeviceInteractionViewModel$ {
     (connectableStatusContainer, connectableStatus) =>
         connectableStatusContainer.copyWith(
             connectableStatus: connectableStatus),
+  );
+
+  static final bondState = Lens<DeviceInteractionViewModel, DeviceBondState>(
+    (bondStateContainer) => bondStateContainer.bondState,
+    (bondStateContainer, bondState) =>
+        bondStateContainer.copyWith(bondState: bondState),
   );
 
   static final connectionStatus =

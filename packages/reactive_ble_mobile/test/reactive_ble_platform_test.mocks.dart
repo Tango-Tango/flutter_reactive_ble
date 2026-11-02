@@ -31,9 +31,20 @@ import 'package:reactive_ble_platform_interface/reactive_ble_platform_interface.
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-class _FakeConnectToDeviceRequest_0 extends _i1.SmartFake
+class _FakeInitializationRequest_0 extends _i1.SmartFake
+    implements _i2.InitializationRequest {
+  _FakeInitializationRequest_0(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeConnectToDeviceRequest_1 extends _i1.SmartFake
     implements _i2.ConnectToDeviceRequest {
-  _FakeConnectToDeviceRequest_0(
+  _FakeConnectToDeviceRequest_1(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -42,9 +53,9 @@ class _FakeConnectToDeviceRequest_0 extends _i1.SmartFake
         );
 }
 
-class _FakeDisconnectFromDeviceRequest_1 extends _i1.SmartFake
+class _FakeDisconnectFromDeviceRequest_2 extends _i1.SmartFake
     implements _i2.DisconnectFromDeviceRequest {
-  _FakeDisconnectFromDeviceRequest_1(
+  _FakeDisconnectFromDeviceRequest_2(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -53,9 +64,9 @@ class _FakeDisconnectFromDeviceRequest_1 extends _i1.SmartFake
         );
 }
 
-class _FakeReadCharacteristicRequest_2 extends _i1.SmartFake
+class _FakeReadCharacteristicRequest_3 extends _i1.SmartFake
     implements _i2.ReadCharacteristicRequest {
-  _FakeReadCharacteristicRequest_2(
+  _FakeReadCharacteristicRequest_3(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -64,9 +75,9 @@ class _FakeReadCharacteristicRequest_2 extends _i1.SmartFake
         );
 }
 
-class _FakeWriteCharacteristicRequest_3 extends _i1.SmartFake
+class _FakeWriteCharacteristicRequest_4 extends _i1.SmartFake
     implements _i2.WriteCharacteristicRequest {
-  _FakeWriteCharacteristicRequest_3(
+  _FakeWriteCharacteristicRequest_4(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -75,9 +86,9 @@ class _FakeWriteCharacteristicRequest_3 extends _i1.SmartFake
         );
 }
 
-class _FakeNotifyCharacteristicRequest_4 extends _i1.SmartFake
+class _FakeNotifyCharacteristicRequest_5 extends _i1.SmartFake
     implements _i2.NotifyCharacteristicRequest {
-  _FakeNotifyCharacteristicRequest_4(
+  _FakeNotifyCharacteristicRequest_5(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -86,9 +97,9 @@ class _FakeNotifyCharacteristicRequest_4 extends _i1.SmartFake
         );
 }
 
-class _FakeNotifyNoMoreCharacteristicRequest_5 extends _i1.SmartFake
+class _FakeNotifyNoMoreCharacteristicRequest_6 extends _i1.SmartFake
     implements _i2.NotifyNoMoreCharacteristicRequest {
-  _FakeNotifyNoMoreCharacteristicRequest_5(
+  _FakeNotifyNoMoreCharacteristicRequest_6(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -97,9 +108,9 @@ class _FakeNotifyNoMoreCharacteristicRequest_5 extends _i1.SmartFake
         );
 }
 
-class _FakeNegotiateMtuRequest_6 extends _i1.SmartFake
+class _FakeNegotiateMtuRequest_7 extends _i1.SmartFake
     implements _i2.NegotiateMtuRequest {
-  _FakeNegotiateMtuRequest_6(
+  _FakeNegotiateMtuRequest_7(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -108,9 +119,9 @@ class _FakeNegotiateMtuRequest_6 extends _i1.SmartFake
         );
 }
 
-class _FakeChangeConnectionPriorityRequest_7 extends _i1.SmartFake
+class _FakeChangeConnectionPriorityRequest_8 extends _i1.SmartFake
     implements _i2.ChangeConnectionPriorityRequest {
-  _FakeChangeConnectionPriorityRequest_7(
+  _FakeChangeConnectionPriorityRequest_8(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -119,9 +130,9 @@ class _FakeChangeConnectionPriorityRequest_7 extends _i1.SmartFake
         );
 }
 
-class _FakeScanForDevicesRequest_8 extends _i1.SmartFake
+class _FakeScanForDevicesRequest_9 extends _i1.SmartFake
     implements _i2.ScanForDevicesRequest {
-  _FakeScanForDevicesRequest_8(
+  _FakeScanForDevicesRequest_9(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -130,9 +141,9 @@ class _FakeScanForDevicesRequest_8 extends _i1.SmartFake
         );
 }
 
-class _FakeClearGattCacheRequest_9 extends _i1.SmartFake
+class _FakeClearGattCacheRequest_10 extends _i1.SmartFake
     implements _i2.ClearGattCacheRequest {
-  _FakeClearGattCacheRequest_9(
+  _FakeClearGattCacheRequest_10(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -141,9 +152,9 @@ class _FakeClearGattCacheRequest_9 extends _i1.SmartFake
         );
 }
 
-class _FakeDiscoverServicesRequest_10 extends _i1.SmartFake
+class _FakeDiscoverServicesRequest_11 extends _i1.SmartFake
     implements _i2.DiscoverServicesRequest {
-  _FakeDiscoverServicesRequest_10(
+  _FakeDiscoverServicesRequest_11(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -152,9 +163,9 @@ class _FakeDiscoverServicesRequest_10 extends _i1.SmartFake
         );
 }
 
-class _FakeReadRssiRequest_11 extends _i1.SmartFake
+class _FakeReadRssiRequest_12 extends _i1.SmartFake
     implements _i2.ReadRssiRequest {
-  _FakeReadRssiRequest_11(
+  _FakeReadRssiRequest_12(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -163,8 +174,8 @@ class _FakeReadRssiRequest_11 extends _i1.SmartFake
         );
 }
 
-class _FakeScanResult_12 extends _i1.SmartFake implements _i3.ScanResult {
-  _FakeScanResult_12(
+class _FakeScanResult_13 extends _i1.SmartFake implements _i3.ScanResult {
+  _FakeScanResult_13(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -173,9 +184,20 @@ class _FakeScanResult_12 extends _i1.SmartFake implements _i3.ScanResult {
         );
 }
 
-class _FakeConnectionStateUpdate_13 extends _i1.SmartFake
+class _FakeBondStateUpdate_14 extends _i1.SmartFake
+    implements _i3.BondStateUpdate {
+  _FakeBondStateUpdate_14(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeConnectionStateUpdate_15 extends _i1.SmartFake
     implements _i3.ConnectionStateUpdate {
-  _FakeConnectionStateUpdate_13(
+  _FakeConnectionStateUpdate_15(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -184,9 +206,9 @@ class _FakeConnectionStateUpdate_13 extends _i1.SmartFake
         );
 }
 
-class _FakeResult_14<Value, Failure> extends _i1.SmartFake
+class _FakeResult_16<Value, Failure> extends _i1.SmartFake
     implements _i3.Result<Value, Failure> {
-  _FakeResult_14(
+  _FakeResult_16(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -195,9 +217,9 @@ class _FakeResult_14<Value, Failure> extends _i1.SmartFake
         );
 }
 
-class _FakeCharacteristicValue_15 extends _i1.SmartFake
+class _FakeCharacteristicValue_17 extends _i1.SmartFake
     implements _i3.CharacteristicValue {
-  _FakeCharacteristicValue_15(
+  _FakeCharacteristicValue_17(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -206,9 +228,9 @@ class _FakeCharacteristicValue_15 extends _i1.SmartFake
         );
 }
 
-class _FakeWriteCharacteristicInfo_16 extends _i1.SmartFake
+class _FakeWriteCharacteristicInfo_18 extends _i1.SmartFake
     implements _i3.WriteCharacteristicInfo {
-  _FakeWriteCharacteristicInfo_16(
+  _FakeWriteCharacteristicInfo_18(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -217,9 +239,9 @@ class _FakeWriteCharacteristicInfo_16 extends _i1.SmartFake
         );
 }
 
-class _FakeConnectionPriorityInfo_17 extends _i1.SmartFake
+class _FakeConnectionPriorityInfo_19 extends _i1.SmartFake
     implements _i3.ConnectionPriorityInfo {
-  _FakeConnectionPriorityInfo_17(
+  _FakeConnectionPriorityInfo_19(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -228,8 +250,8 @@ class _FakeConnectionPriorityInfo_17 extends _i1.SmartFake
         );
 }
 
-class _FakeMethodCodec_18 extends _i1.SmartFake implements _i4.MethodCodec {
-  _FakeMethodCodec_18(
+class _FakeMethodCodec_20 extends _i1.SmartFake implements _i4.MethodCodec {
+  _FakeMethodCodec_20(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -238,9 +260,9 @@ class _FakeMethodCodec_18 extends _i1.SmartFake implements _i4.MethodCodec {
         );
 }
 
-class _FakeBinaryMessenger_19 extends _i1.SmartFake
+class _FakeBinaryMessenger_21 extends _i1.SmartFake
     implements _i5.BinaryMessenger {
-  _FakeBinaryMessenger_19(
+  _FakeBinaryMessenger_21(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -259,6 +281,23 @@ class MockArgsToProtobufConverter extends _i1.Mock
   }
 
   @override
+  _i2.InitializationRequest createInitializationRequest(
+          String? restorationKey) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #createInitializationRequest,
+          [restorationKey],
+        ),
+        returnValue: _FakeInitializationRequest_0(
+          this,
+          Invocation.method(
+            #createInitializationRequest,
+            [restorationKey],
+          ),
+        ),
+      ) as _i2.InitializationRequest);
+
+  @override
   _i2.ConnectToDeviceRequest createConnectToDeviceArgs(
     String? id,
     Map<_i3.Uuid, List<_i3.Uuid>>? servicesWithCharacteristicsToDiscover,
@@ -273,7 +312,7 @@ class MockArgsToProtobufConverter extends _i1.Mock
             connectionTimeout,
           ],
         ),
-        returnValue: _FakeConnectToDeviceRequest_0(
+        returnValue: _FakeConnectToDeviceRequest_1(
           this,
           Invocation.method(
             #createConnectToDeviceArgs,
@@ -294,7 +333,7 @@ class MockArgsToProtobufConverter extends _i1.Mock
           #createDisconnectDeviceArgs,
           [deviceId],
         ),
-        returnValue: _FakeDisconnectFromDeviceRequest_1(
+        returnValue: _FakeDisconnectFromDeviceRequest_2(
           this,
           Invocation.method(
             #createDisconnectDeviceArgs,
@@ -311,7 +350,7 @@ class MockArgsToProtobufConverter extends _i1.Mock
           #createReadCharacteristicRequest,
           [characteristic],
         ),
-        returnValue: _FakeReadCharacteristicRequest_2(
+        returnValue: _FakeReadCharacteristicRequest_3(
           this,
           Invocation.method(
             #createReadCharacteristicRequest,
@@ -333,7 +372,7 @@ class MockArgsToProtobufConverter extends _i1.Mock
             value,
           ],
         ),
-        returnValue: _FakeWriteCharacteristicRequest_3(
+        returnValue: _FakeWriteCharacteristicRequest_4(
           this,
           Invocation.method(
             #createWriteCharacteristicRequest,
@@ -353,7 +392,7 @@ class MockArgsToProtobufConverter extends _i1.Mock
           #createNotifyCharacteristicRequest,
           [characteristic],
         ),
-        returnValue: _FakeNotifyCharacteristicRequest_4(
+        returnValue: _FakeNotifyCharacteristicRequest_5(
           this,
           Invocation.method(
             #createNotifyCharacteristicRequest,
@@ -370,7 +409,7 @@ class MockArgsToProtobufConverter extends _i1.Mock
           #createNotifyNoMoreCharacteristicRequest,
           [characteristic],
         ),
-        returnValue: _FakeNotifyNoMoreCharacteristicRequest_5(
+        returnValue: _FakeNotifyNoMoreCharacteristicRequest_6(
           this,
           Invocation.method(
             #createNotifyNoMoreCharacteristicRequest,
@@ -392,7 +431,7 @@ class MockArgsToProtobufConverter extends _i1.Mock
             mtu,
           ],
         ),
-        returnValue: _FakeNegotiateMtuRequest_6(
+        returnValue: _FakeNegotiateMtuRequest_7(
           this,
           Invocation.method(
             #createNegotiateMtuRequest,
@@ -417,7 +456,7 @@ class MockArgsToProtobufConverter extends _i1.Mock
             priority,
           ],
         ),
-        returnValue: _FakeChangeConnectionPriorityRequest_7(
+        returnValue: _FakeChangeConnectionPriorityRequest_8(
           this,
           Invocation.method(
             #createChangeConnectionPrioRequest,
@@ -445,7 +484,7 @@ class MockArgsToProtobufConverter extends _i1.Mock
             #requireLocationServicesEnabled: requireLocationServicesEnabled,
           },
         ),
-        returnValue: _FakeScanForDevicesRequest_8(
+        returnValue: _FakeScanForDevicesRequest_9(
           this,
           Invocation.method(
             #createScanForDevicesRequest,
@@ -466,7 +505,7 @@ class MockArgsToProtobufConverter extends _i1.Mock
           #createClearGattCacheRequest,
           [deviceId],
         ),
-        returnValue: _FakeClearGattCacheRequest_9(
+        returnValue: _FakeClearGattCacheRequest_10(
           this,
           Invocation.method(
             #createClearGattCacheRequest,
@@ -482,7 +521,7 @@ class MockArgsToProtobufConverter extends _i1.Mock
           #createDiscoverServicesRequest,
           [deviceId],
         ),
-        returnValue: _FakeDiscoverServicesRequest_10(
+        returnValue: _FakeDiscoverServicesRequest_11(
           this,
           Invocation.method(
             #createDiscoverServicesRequest,
@@ -498,7 +537,7 @@ class MockArgsToProtobufConverter extends _i1.Mock
           #createReadRssiRequest,
           [deviceId],
         ),
-        returnValue: _FakeReadRssiRequest_11(
+        returnValue: _FakeReadRssiRequest_12(
           this,
           Invocation.method(
             #createReadRssiRequest,
@@ -531,7 +570,7 @@ class MockProtobufConverter extends _i1.Mock implements _i7.ProtobufConverter {
           #scanResultFrom,
           [data],
         ),
-        returnValue: _FakeScanResult_12(
+        returnValue: _FakeScanResult_13(
           this,
           Invocation.method(
             #scanResultFrom,
@@ -541,13 +580,28 @@ class MockProtobufConverter extends _i1.Mock implements _i7.ProtobufConverter {
       ) as _i3.ScanResult);
 
   @override
+  _i3.BondStateUpdate bondUpdateFrom(List<int>? data) => (super.noSuchMethod(
+        Invocation.method(
+          #bondUpdateFrom,
+          [data],
+        ),
+        returnValue: _FakeBondStateUpdate_14(
+          this,
+          Invocation.method(
+            #bondUpdateFrom,
+            [data],
+          ),
+        ),
+      ) as _i3.BondStateUpdate);
+
+  @override
   _i3.ConnectionStateUpdate connectionStateUpdateFrom(List<int>? data) =>
       (super.noSuchMethod(
         Invocation.method(
           #connectionStateUpdateFrom,
           [data],
         ),
-        returnValue: _FakeConnectionStateUpdate_13(
+        returnValue: _FakeConnectionStateUpdate_15(
           this,
           Invocation.method(
             #connectionStateUpdateFrom,
@@ -557,13 +611,23 @@ class MockProtobufConverter extends _i1.Mock implements _i7.ProtobufConverter {
       ) as _i3.ConnectionStateUpdate);
 
   @override
+  List<_i3.RestoredPeripheral> restoredDevicesFrom(List<int>? data) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #restoredDevicesFrom,
+          [data],
+        ),
+        returnValue: <_i3.RestoredPeripheral>[],
+      ) as List<_i3.RestoredPeripheral>);
+
+  @override
   _i3.Result<_i3.Unit, _i3.GenericFailure<_i3.ClearGattCacheError>?>
       clearGattCacheResultFrom(List<int>? data) => (super.noSuchMethod(
             Invocation.method(
               #clearGattCacheResultFrom,
               [data],
             ),
-            returnValue: _FakeResult_14<_i3.Unit,
+            returnValue: _FakeResult_16<_i3.Unit,
                 _i3.GenericFailure<_i3.ClearGattCacheError>?>(
               this,
               Invocation.method(
@@ -581,7 +645,7 @@ class MockProtobufConverter extends _i1.Mock implements _i7.ProtobufConverter {
           #characteristicValueFrom,
           [data],
         ),
-        returnValue: _FakeCharacteristicValue_15(
+        returnValue: _FakeCharacteristicValue_17(
           this,
           Invocation.method(
             #characteristicValueFrom,
@@ -597,7 +661,7 @@ class MockProtobufConverter extends _i1.Mock implements _i7.ProtobufConverter {
           #writeCharacteristicInfoFrom,
           [data],
         ),
-        returnValue: _FakeWriteCharacteristicInfo_16(
+        returnValue: _FakeWriteCharacteristicInfo_18(
           this,
           Invocation.method(
             #writeCharacteristicInfoFrom,
@@ -613,7 +677,7 @@ class MockProtobufConverter extends _i1.Mock implements _i7.ProtobufConverter {
           #connectionPriorityInfoFrom,
           [data],
         ),
-        returnValue: _FakeConnectionPriorityInfo_17(
+        returnValue: _FakeConnectionPriorityInfo_19(
           this,
           Invocation.method(
             #connectionPriorityInfoFrom,
@@ -671,7 +735,7 @@ class MockMethodChannel extends _i1.Mock implements _i8.MethodChannel {
   @override
   _i4.MethodCodec get codec => (super.noSuchMethod(
         Invocation.getter(#codec),
-        returnValue: _FakeMethodCodec_18(
+        returnValue: _FakeMethodCodec_20(
           this,
           Invocation.getter(#codec),
         ),
@@ -680,7 +744,7 @@ class MockMethodChannel extends _i1.Mock implements _i8.MethodChannel {
   @override
   _i5.BinaryMessenger get binaryMessenger => (super.noSuchMethod(
         Invocation.getter(#binaryMessenger),
-        returnValue: _FakeBinaryMessenger_19(
+        returnValue: _FakeBinaryMessenger_21(
           this,
           Invocation.getter(#binaryMessenger),
         ),

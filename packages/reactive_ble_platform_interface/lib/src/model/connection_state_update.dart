@@ -35,7 +35,7 @@ enum DeviceConnectionState {
   disconnecting,
 
   /// Device is disconnected.
-  disconnected
+  disconnected,
 }
 
 /// Type of connection error.

@@ -1,4 +1,5 @@
 export './model/ble_status.dart';
+export './model/bond_state_update.dart';
 export './model/characteristic_instance.dart';
 export './model/characteristic_value.dart';
 export './model/clear_gatt_cache_error.dart';
@@ -10,6 +11,8 @@ export './model/discovered_service.dart';
 export './model/generic_failure.dart';
 export './model/log_level.dart';
 export './model/qualified_characteristic.dart';
+export './model/restored_device.dart';
+export './model/restored_peripheral.dart';
 export './model/result.dart';
 export './model/scan_mode.dart';
 export './model/scan_session.dart';

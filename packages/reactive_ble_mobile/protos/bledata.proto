@@ -2,6 +2,10 @@ syntax = "proto3";
 option java_package = "com.signify.hue.flutterreactiveble";
 option java_outer_classname = "ProtobufModel";
 
+message InitializationRequest {
+     string restorationKey = 1;
+}
+
 message ScanForDevicesRequest {
     repeated Uuid serviceUuids = 1;
     int32 scanMode = 2;
@@ -25,10 +29,25 @@ message ConnectToDeviceRequest {
     int32 timeoutInMs = 3;
 }
 
+message BondInfo {
+    string id = 1;
+    int32 bondState = 2;
+}
+
 message DeviceInfo {
     string id = 1;
     int32 connectionState = 2;
     GenericFailure failure = 3;
+}
+
+message RestoredDeviceInfo {
+    string id = 1;
+    string name = 2;
+    repeated CharacteristicAddress subscriptions = 3;
+}
+
+message RestoredDeviceInfoCollection {
+    repeated RestoredDeviceInfo devices = 1;
 }
 
 message DisconnectFromDeviceRequest {
@@ -152,6 +171,10 @@ message ReadRssiRequest {
 
 message ReadRssiResult {
     int32 rssi = 1;
+}
+
+message DeviceInfoCollection {
+    repeated DeviceInfo devices = 1;
 }
 
 message Uuid {

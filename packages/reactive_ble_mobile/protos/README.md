@@ -24,7 +24,10 @@ brew install dart
 
 ```sh
 protoc --dart_out=../lib/src/generated ./bledata.proto
-protoc --swift_out=../darwin/Classes/BleData ./bledata.proto
+protoc --swift_out=../darwin/reactive_ble_mobile/Sources/reactive_ble_mobile/BleData ./bledata.proto
 ```
 
-NOTE: If directory `../lib/generated` or `./darwin/Classes/BleData` does not exist please create it.
+NOTE: If directory `../lib/generated` or `../darwin/reactive_ble_mobile/Sources/reactive_ble_mobile/BleData` does not exist please create it.
+
+Generated files were last produced with protoc 34.1, protoc_plugin 25.0.0 (Dart) and
+protoc-gen-swift 1.36.1. The generated Swift code needs SwiftProtobuf >= 1.31.0 at runtime.

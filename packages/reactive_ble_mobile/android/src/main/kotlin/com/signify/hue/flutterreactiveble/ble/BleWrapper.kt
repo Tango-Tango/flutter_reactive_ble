@@ -71,6 +71,11 @@ data class RequestConnectionPrioritySuccess(val deviceId: String) : RequestConne
 
 data class RequestConnectionPriorityFailed(val deviceId: String, val errorMessage: String) : RequestConnectionPriorityResult()
 
+data class BondUpdate(
+    val deviceId: String,
+    val bondState: Int,
+)
+
 enum class BleStatus(val code: Int) {
     UNKNOWN(code = 0),
     UNSUPPORTED(code = 1),
