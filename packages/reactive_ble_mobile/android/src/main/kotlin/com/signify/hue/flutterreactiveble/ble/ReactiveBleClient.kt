@@ -250,8 +250,8 @@ open class ReactiveBleClient(private val context: Context) : BleClient {
         deviceId: String,
         characteristicId: UUID,
         characteristicInstanceId: Int,
-    ): Observable<Observable<ByteArray>> {
-        return getConnection(deviceId)
+    ): Observable<Observable<ByteArray>> =
+        getConnection(deviceId)
             .flatMap { deviceConnection ->
                 setupNotificationOrIndication(
                     deviceConnection,
@@ -259,7 +259,6 @@ open class ReactiveBleClient(private val context: Context) : BleClient {
                     characteristicInstanceId,
                 )
             }
-    }
 
     override fun negotiateMtuSize(
         deviceId: String,

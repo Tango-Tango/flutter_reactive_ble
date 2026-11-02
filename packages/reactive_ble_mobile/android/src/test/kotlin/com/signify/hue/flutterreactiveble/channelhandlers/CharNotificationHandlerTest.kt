@@ -52,13 +52,15 @@ class CharNotificationHandlerTest {
 
         val uuid = UUID.randomUUID()
         val uuidBytes =
-            ByteBuffer.wrap(ByteArray(16))
+            ByteBuffer
+                .wrap(ByteArray(16))
                 .putLong(uuid.mostSignificantBits)
                 .putLong(uuid.leastSignificantBits)
                 .array()
 
         val charAddress =
-            pb.CharacteristicAddress.newBuilder()
+            pb.CharacteristicAddress
+                .newBuilder()
                 .setDeviceId("device1")
                 .setServiceUuid(pb.Uuid.newBuilder().setData(ByteString.copyFrom(uuidBytes)))
                 .setServiceInstanceId("10")
@@ -67,7 +69,8 @@ class CharNotificationHandlerTest {
                 .build()
 
         val request =
-            pb.NotifyCharacteristicRequest.newBuilder()
+            pb.NotifyCharacteristicRequest
+                .newBuilder()
                 .setCharacteristic(charAddress)
                 .build()
 
@@ -96,13 +99,15 @@ class CharNotificationHandlerTest {
 
         val uuid = UUID.randomUUID()
         val uuidBytes =
-            ByteBuffer.wrap(ByteArray(16))
+            ByteBuffer
+                .wrap(ByteArray(16))
                 .putLong(uuid.mostSignificantBits)
                 .putLong(uuid.leastSignificantBits)
                 .array()
 
         val charAddress =
-            pb.CharacteristicAddress.newBuilder()
+            pb.CharacteristicAddress
+                .newBuilder()
                 .setDeviceId("device1")
                 .setServiceUuid(pb.Uuid.newBuilder().setData(ByteString.copyFrom(uuidBytes)))
                 .setServiceInstanceId("10")
@@ -111,7 +116,8 @@ class CharNotificationHandlerTest {
                 .build()
 
         val request =
-            pb.NotifyCharacteristicRequest.newBuilder()
+            pb.NotifyCharacteristicRequest
+                .newBuilder()
                 .setCharacteristic(charAddress)
                 .build()
 

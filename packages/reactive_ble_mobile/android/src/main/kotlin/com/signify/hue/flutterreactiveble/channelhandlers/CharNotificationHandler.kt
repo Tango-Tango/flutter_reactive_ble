@@ -8,8 +8,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import com.signify.hue.flutterreactiveble.ProtobufModel as pb
 
-class CharNotificationHandler(private val bleClient: com.signify.hue.flutterreactiveble.ble.BleClient) :
-    EventChannel.StreamHandler {
+class CharNotificationHandler(
+    private val bleClient: com.signify.hue.flutterreactiveble.ble.BleClient,
+) : EventChannel.StreamHandler {
     private val uuidConverter = UuidConverter()
     private val protobufConverter = ProtobufMessageConverter()
 
@@ -39,8 +40,12 @@ class CharNotificationHandler(private val bleClient: com.signify.hue.flutterreac
     ) {
         val charUuid =
             uuidConverter
-                .uuidFromByteArray(request.characteristic.characteristicUuid.data.toByteArray())
+                .uuidFromByteArray(
+                    request.characteristic.characteristicUuid.data
+                        .toByteArray(),
+                )
         var isCompleted = false
+
         fun completeSubscription() {
             if (!isCompleted) {
                 isCompleted = true
@@ -49,19 +54,18 @@ class CharNotificationHandler(private val bleClient: com.signify.hue.flutterreac
         }
         subscriptionMap.remove(request.characteristic)?.dispose()
         val subscription =
-            bleClient.setupNotification(
-                request.characteristic.deviceId,
-                charUuid,
-                request.characteristic.characteristicInstanceId.toInt(),
-            )
-                .observeOn(AndroidSchedulers.mainThread())
+            bleClient
+                .setupNotification(
+                    request.characteristic.deviceId,
+                    charUuid,
+                    request.characteristic.characteristicInstanceId.toInt(),
+                ).observeOn(AndroidSchedulers.mainThread())
                 .doOnDispose(::completeSubscription)
                 .flatMap { notificationObservable ->
                     notificationObservable
                         .observeOn(AndroidSchedulers.mainThread())
                         .doOnSubscribe { completeSubscription() }
-                }
-                .observeOn(AndroidSchedulers.mainThread())
+                }.observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ value ->
                     handleNotificationValue(request.characteristic, value)
                 }, {
@@ -73,6 +77,7 @@ class CharNotificationHandler(private val bleClient: com.signify.hue.flutterreac
                         is BleDisconnectedException -> {
                             subscriptionMap.remove(request.characteristic)?.dispose()
                         }
+
                         else -> {
                             handleNotificationError(request.characteristic, it)
                         }
