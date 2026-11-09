@@ -307,7 +307,10 @@ open class ReactiveBleClient(private val context: Context) : BleClient {
         characteristicId: UUID,
         characteristicInstanceId: Int,
         value: ByteArray,
-        bleOperation: RxBleConnection.(characteristic: BluetoothGattCharacteristic, value: ByteArray) -> Single<ByteArray>,
+        bleOperation: RxBleConnection.(
+            characteristic: BluetoothGattCharacteristic,
+            value: ByteArray,
+        ) -> Single<ByteArray>,
     ): Single<CharOperationResult> {
         return getConnection(deviceId)
             .flatMapSingle { connectionResult ->
