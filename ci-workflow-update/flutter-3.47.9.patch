@@ -1,0 +1,13 @@
+diff --git a/.github/workflows/main.yml b/.github/workflows/main.yml
+index 99fe17c..14d5b80 100644
+--- a/.github/workflows/main.yml
++++ b/.github/workflows/main.yml
+@@ -24,7 +24,7 @@ jobs:
+       - name: Set Up Flutter
+         uses: subosito/flutter-action@v2
+         with:
+-          flutter-version: '3.44.0'
++          flutter-version: '3.47.9'
+           channel: 'stable'
+ 
+       - name: Set up debug keystore
