@@ -1,24 +1,24 @@
-group 'com.signify.hue.flutterreactiveblelib'
-version '1.0-SNAPSHOT'
+group = 'com.signify.hue.flutterreactiveblelib'
+version = '1.0-SNAPSHOT'
 
 buildscript {
-    ext.detekt_version = '1.23.0'
-    ext.kotlin_version = '2.4.10'
+    ext.detekt_version = '1.23.8'
+    ext.kotlin_version = '2.4.21'
     ext.junit_version = '5.11.4'
     repositories {
         google()
         mavenCentral()
         maven {
-            url "https://plugins.gradle.org/m2/"
+            url = "https://plugins.gradle.org/m2/"
         }
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:9.1.0'
-        classpath 'com.google.protobuf:protobuf-gradle-plugin:0.9.4'
+        classpath 'com.android.tools.build:gradle:9.5.1'
+        classpath 'com.google.protobuf:protobuf-gradle-plugin:0.10.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "io.gitlab.arturbosch.detekt:detekt-gradle-plugin:$detekt_version"
-        classpath "de.mannodermaus.gradle.plugins:android-junit5:1.11.2.0"
+        classpath "de.mannodermaus.gradle.plugins:android-junit5:2.0.2"
     }
 }
 
@@ -27,7 +27,7 @@ rootProject.allprojects {
         google()
         mavenCentral()
         maven {
-            url "https://plugins.gradle.org/m2/"
+            url = "https://plugins.gradle.org/m2/"
         }
     }
 }
@@ -35,10 +35,10 @@ rootProject.allprojects {
 apply plugin: 'com.android.library'
 apply plugin: 'com.google.protobuf'
 apply plugin: "io.gitlab.arturbosch.detekt"
-apply plugin: "de.mannodermaus.android-junit5"
+apply plugin: "de.mannodermaus.android-junit"
 
 android {
-    compileSdkVersion 37
+    compileSdk = 37
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
         test.java.srcDirs += 'src/test/kotlin'
@@ -50,20 +50,20 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 21
-        targetSdkVersion 37
+        minSdk = 21
+        targetSdk = 37
         consumerProguardFiles 'proguard-rules.txt'
     }
 
-    namespace 'com.signify.hue.flutterreactiveble'
+    namespace = 'com.signify.hue.flutterreactiveble'
 
     lint {
         disable 'InvalidPackage'
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 }
 
@@ -75,7 +75,7 @@ kotlin {
 
 detekt {
     version = detekt_version
-    input = files("src/main/kotlin")
+    source.setFrom(files("src/main/kotlin"))
     dependencies {
         detektPlugins "io.gitlab.arturbosch.detekt:detekt-formatting:$detekt_version"
         detektPlugins "io.gitlab.arturbosch.detekt:detekt-rules-libraries:$detekt_version"
